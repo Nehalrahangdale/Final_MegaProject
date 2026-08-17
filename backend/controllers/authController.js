@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 // =======================
 const register = async (req, res) => {
     try {
-        const { name, email, password, phone } = req.body;
+        const { name, email, password, phone, role } = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
@@ -19,6 +19,9 @@ const register = async (req, res) => {
             });
         }
 
+        const validRoles = ["user", "owner"];
+        const userRole = validRoles.includes(role) ? role : "user";
+
         // Hash Password
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -28,6 +31,7 @@ const register = async (req, res) => {
             email,
             password: hashedPassword,
             phone,
+            role: userRole,
         });
 
         res.status(201).json({

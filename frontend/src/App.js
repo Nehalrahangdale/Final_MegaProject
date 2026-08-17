@@ -19,11 +19,18 @@ import ParkingDetails from "./pages/ParkingDetails";
 import Booking from "./pages/Booking";
 import Payment from "./pages/Payment";
 import NotFound from "./pages/NotFound";
+import Unauthorized from "./pages/Unauthorized";
 
 // Dashboard Pages
 import UserDashboard from "./pages/UserDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+
+// Admin Management Pages
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminOwners from "./pages/admin/AdminOwners";
+import AdminParking from "./pages/admin/AdminParking";
+import AdminBookings from "./pages/admin/AdminBookings";
 
 function App() {
   return (
@@ -50,7 +57,10 @@ function App() {
 
             <Route path="/register" element={<Register />} />
 
-            <Route path="/parkings" element={<ParkingList />} />
+            <Route
+              path="/parkings"
+              element={<ParkingList />}
+            />
 
             <Route
               path="/parking/:id"
@@ -77,31 +87,83 @@ function App() {
               }
             />
 
+            {/* User Dashboard */}
             <Route
               path="/user/dashboard"
               element={
-                <PrivateRoute>
+                <PrivateRoute allowedRoles={["user"]}>
                   <UserDashboard />
                 </PrivateRoute>
               }
             />
 
+            {/* Owner Dashboard */}
             <Route
               path="/owner/dashboard"
               element={
-                <PrivateRoute>
+                <PrivateRoute allowedRoles={["owner"]}>
                   <OwnerDashboard />
                 </PrivateRoute>
               }
             />
 
+            {/* ================= ADMIN ROUTES ================= */}
+
+            {/* Admin Dashboard */}
             <Route
               path="/admin/dashboard"
               element={
-                <PrivateRoute>
+                <PrivateRoute allowedRoles={["admin"]}>
                   <AdminDashboard />
                 </PrivateRoute>
               }
+            />
+
+            {/* Manage Users */}
+            <Route
+              path="/admin/users"
+              element={
+                <PrivateRoute allowedRoles={["admin"]}>
+                  <AdminUsers />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Manage Owners */}
+            <Route
+              path="/admin/owners"
+              element={
+                <PrivateRoute allowedRoles={["admin"]}>
+                  <AdminOwners />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Manage Parking */}
+            <Route
+              path="/admin/parking"
+              element={
+                <PrivateRoute allowedRoles={["admin"]}>
+                  <AdminParking />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Manage Bookings */}
+            <Route
+              path="/admin/bookings"
+              element={
+                <PrivateRoute allowedRoles={["admin"]}>
+                  <AdminBookings />
+                </PrivateRoute>
+              }
+            />
+
+            {/* ================= UNAUTHORIZED ================= */}
+
+            <Route
+              path="/unauthorized"
+              element={<Unauthorized />}
             />
 
             {/* ================= 404 ================= */}

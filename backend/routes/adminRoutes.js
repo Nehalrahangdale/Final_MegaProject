@@ -1,18 +1,73 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
-    getDashboard,
-    getAllUsers,
-    getAllParking,
-    getAllBookings,
-    deleteUser
+  protect,
+  authorize,
+} = require("../middleware/authMiddleware");
+
+const {
+  getDashboard,
+  getAllUsers,
+  getAllParking,
+  getAllBookings,
+  deleteUser,
 } = require("../controllers/adminController");
 
-router.get("/dashboard", getDashboard);
-router.get("/users", getAllUsers);
-router.get("/parking", getAllParking);
-router.get("/bookings", getAllBookings);
-router.delete("/users/:id", deleteUser);
+// =====================================
+// Admin Dashboard
+// =====================================
+
+router.get(
+  "/dashboard",
+  protect,
+  authorize("admin"),
+  getDashboard
+);
+
+// =====================================
+// Users
+// =====================================
+
+router.get(
+  "/users",
+  protect,
+  authorize("admin"),
+  getAllUsers
+);
+
+// =====================================
+// Parking
+// =====================================
+
+router.get(
+  "/parking",
+  protect,
+  authorize("admin"),
+  getAllParking
+);
+
+// =====================================
+// Bookings
+// =====================================
+
+router.get(
+  "/bookings",
+  protect,
+  authorize("admin"),
+  getAllBookings
+);
+
+// =====================================
+// Delete User
+// =====================================
+
+router.delete(
+  "/users/:id",
+  protect,
+  authorize("admin"),
+  deleteUser
+);
 
 module.exports = router;

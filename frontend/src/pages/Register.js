@@ -11,6 +11,7 @@ function Register() {
     phone: "",
     password: "",
     confirmPassword: "",
+    role: "user",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -39,6 +40,7 @@ function Register() {
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
+        role: formData.role,
       };
 
       const data = await registerUser(payload);
@@ -122,6 +124,19 @@ function Register() {
                   onChange={handleChange}
                   required
                 />
+              </div>
+
+              <div className="mb-3">
+                <label>Register As</label>
+                <select
+                  className="form-control"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                >
+                  <option value="user">User</option>
+                  <option value="owner">Parking Owner</option>
+                </select>
               </div>
 
               <div className="mb-3">

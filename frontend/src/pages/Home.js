@@ -5,10 +5,11 @@ import {
   FaCar,
   FaParking,
 } from "react-icons/fa";
+import "./Home.css";
 
 function Home() {
   return (
-    <>
+    <div className="home-wrapper">
       {/* ================= HERO SECTION ================= */}
 
       <section className="hero">
@@ -74,7 +75,7 @@ function Home() {
 
       {/* ================= SEARCH SECTION ================= */}
 
-      <section className="py-5 bg-white">
+      <section className="search-section pb-5">
 
         <div className="container">
 
@@ -509,7 +510,7 @@ function Home() {
 
       <div className="col-md-4">
 
-        <div className="card shadow p-4 h-100">
+        <div className="card review-card h-100">
 
           <h4 className="text-warning">
             ⭐⭐⭐⭐⭐
@@ -532,7 +533,7 @@ function Home() {
 
       <div className="col-md-4">
 
-        <div className="card shadow p-4 h-100">
+        <div className="card review-card h-100">
 
           <h4 className="text-warning">
             ⭐⭐⭐⭐⭐
@@ -555,7 +556,7 @@ function Home() {
 
       <div className="col-md-4">
 
-        <div className="card shadow p-4 h-100">
+        <div className="card review-card h-100">
 
           <h4 className="text-warning">
             ⭐⭐⭐⭐⭐
@@ -739,7 +740,7 @@ Send Message
 
 <div className="col-lg-6 mt-5 mt-lg-0">
 
-<div className="card shadow p-4">
+<div className="card contact-card h-100">
 
 <h4>
 📍 NextPark AI
@@ -799,7 +800,7 @@ support@nextpark.com
 
 {/* ================= DOWNLOAD APP ================= */}
 
-<section className="py-5 bg-primary text-white">
+<section className="app-cta text-white">
 
 <div className="container text-center">
 
@@ -866,7 +867,7 @@ Book parking anytime using Android & iOS.
 
       {/* ================= FINAL CTA ================= */}
 
-      <section className="py-5 bg-dark text-white">
+      <section className="final-cta text-white">
 
         <div className="container text-center">
 
@@ -900,7 +901,7 @@ Book parking anytime using Android & iOS.
 
       </section>
 
-    </>
+    </div>
   );
 }
 

@@ -10,8 +10,15 @@ function Login() {
     password: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  // =====================================
+  // Handle Input
+  // =====================================
 
   const handleChange = (e) => {
     setFormData({
@@ -20,52 +27,92 @@ function Login() {
     });
   };
 
+  // =====================================
+  // Login
+  // =====================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setLoading(true);
-
     try {
+      setLoading(true);
+
       const data = await loginUser(formData);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      // Save authentication data
+      localStorage.setItem(
+        "token",
+        data.token
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
 
       alert("✅ Login Successful");
 
-      if (data.user.role === "admin") {
+      // =================================
+      // Role Based Redirect
+      // =================================
+
+      if (data.user?.role === "admin") {
         navigate("/admin/dashboard");
-      } else if (data.user.role === "owner") {
+      } else if (
+        data.user?.role === "owner"
+      ) {
         navigate("/owner/dashboard");
       } else {
         navigate("/user/dashboard");
       }
 
-    } catch (err) {
-      alert(err.response?.data?.message || "Login Failed");
-    }
+    } catch (error) {
+      console.error(
+        "Login Error:",
+        error
+      );
 
-    setLoading(false);
+      alert(
+        error.response?.data?.message ||
+          "Login Failed"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="container py-5">
+
       <div className="row justify-content-center">
 
         <div className="col-md-5">
 
           <div className="card shadow-lg border-0 p-4">
 
+            {/* Header */}
+
             <h2 className="text-center mb-4">
               🔐 Login
             </h2>
 
+            {/* Form */}
+
             <form onSubmit={handleSubmit}>
 
+              {/* Email */}
+
               <div className="mb-3">
-                <label>Email</label>
+
+                <label
+                  className="form-label"
+                  htmlFor="email"
+                >
+                  Email
+                </label>
 
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   className="form-control"
@@ -74,13 +121,27 @@ function Login() {
                   onChange={handleChange}
                   required
                 />
+
               </div>
 
+              {/* Password */}
+
               <div className="mb-3">
-                <label>Password</label>
+
+                <label
+                  className="form-label"
+                  htmlFor="password"
+                >
+                  Password
+                </label>
 
                 <input
-                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
                   name="password"
                   className="form-control"
                   placeholder="Enter Password"
@@ -89,34 +150,57 @@ function Login() {
                   required
                 />
 
+                {/* Show Password */}
+
                 <div className="form-check mt-2">
+
                   <input
+                    id="showPassword"
                     type="checkbox"
                     className="form-check-input"
-                    onChange={() => setShowPassword(!showPassword)}
+                    checked={showPassword}
+                    onChange={() =>
+                      setShowPassword(
+                        !showPassword
+                      )
+                    }
                   />
 
-                  <label className="form-check-label">
+                  <label
+                    className="form-check-label"
+                    htmlFor="showPassword"
+                  >
                     Show Password
                   </label>
+
                 </div>
 
               </div>
 
+              {/* Login Button */}
+
               <button
-                className="btn btn-primary w-100"
+                type="submit"
+                className="btn btn-success w-100"
                 disabled={loading}
               >
-                {loading ? "Logging in..." : "Login"}
+                {loading
+                  ? "Logging in..."
+                  : "Login"}
               </button>
 
             </form>
 
-            <p className="text-center mt-3">
+            {/* Register */}
+
+            <p className="text-center mt-3 mb-0">
+
               Don't have an account?{" "}
+
               <Link to="/register">
                 Register
               </Link>
+
             </p>
 
           </div>
@@ -124,6 +208,7 @@ function Login() {
         </div>
 
       </div>
+
     </div>
   );
 }
