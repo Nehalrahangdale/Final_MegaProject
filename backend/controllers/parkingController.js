@@ -113,7 +113,10 @@ const updateParking = async (req, res) => {
       });
     }
 
-    if (parking.owner.toString() !== req.user._id.toString()) {
+    if (
+      req.user.role !== "admin" &&
+      parking.owner.toString() !== req.user._id.toString()
+    ) {
       return res.status(403).json({
         success: false,
         message: "You are not authorized to update this parking.",
@@ -156,7 +159,10 @@ const deleteParking = async (req, res) => {
       });
     }
 
-    if (parking.owner.toString() !== req.user._id.toString()) {
+    if (
+      req.user.role !== "admin" &&
+      parking.owner.toString() !== req.user._id.toString()
+    ) {
       return res.status(403).json({
         success: false,
         message: "You are not authorized to delete this parking.",

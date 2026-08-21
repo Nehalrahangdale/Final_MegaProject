@@ -1,9 +1,18 @@
+const User = require("../models/User");
+
+// =====================================
+// Get All Users (Admin Only)
+// =====================================
 const getUsers = async (req, res) => {
     try {
+        const users = await User.find()
+            .select("-password")
+            .sort({ createdAt: -1 });
+
         res.status(200).json({
             success: true,
-            message: "Users fetched successfully",
-            users: [],
+            count: users.length,
+            users,
         });
     } catch (error) {
         res.status(500).json({
@@ -13,14 +22,23 @@ const getUsers = async (req, res) => {
     }
 };
 
+// =====================================
+// Get User By ID
+// =====================================
 const getUserById = async (req, res) => {
     try {
+        const user = await User.findById(req.params.id).select("-password");
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
         res.status(200).json({
             success: true,
-            message: "User fetched successfully",
-            user: {
-                id: req.params.id,
-            },
+            user,
         });
     } catch (error) {
         res.status(500).json({
@@ -33,4 +51,4 @@ const getUserById = async (req, res) => {
 module.exports = {
     getUsers,
     getUserById,
-};
+};

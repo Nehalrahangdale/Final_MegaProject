@@ -318,7 +318,7 @@ function AdminDashboard() {
             accounts.
           </p>
 
-          <button onClick={() => navigate("/admin/users")}>
+          <button onClick={() => navigate("/admin/owners")}>
             Manage Owners
           </button>
 

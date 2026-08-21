@@ -6,7 +6,15 @@ const {
     getUserById,
 } = require("../controllers/userController");
 
-router.get("/", getUsers);
-router.get("/:id", getUserById);
+const {
+    protect,
+    authorize,
+} = require("../middleware/authMiddleware");
+
+// Admin only — get all users
+router.get("/", protect, authorize("admin"), getUsers);
+
+// Admin only — get user by ID
+router.get("/:id", protect, authorize("admin"), getUserById);
 
 module.exports = router;

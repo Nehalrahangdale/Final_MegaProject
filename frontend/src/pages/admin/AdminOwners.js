@@ -1,97 +1,81 @@
-import API from "./api";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { FaArrowLeft, FaUserTie } from "react-icons/fa";
+import { getAllOwners } from "../../services/adminService";
+import "./AdminPages.css";
 
-// =====================================
-// Authorization Config
-// =====================================
+const AdminOwners = () => {
+  const [owners, setOwners] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const getConfig = () => {
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    fetchOwners();
+  }, []);
 
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const fetchOwners = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllOwners();
+      setOwners(data.owners || []);
+    } catch (error) {
+      console.error("Error fetching owners:", error);
+      alert(error.response?.data?.message || "Failed to load owners");
+    } finally {
+      setLoading(false);
+    }
   };
-};
 
-// =====================================
-// Admin Dashboard
-// =====================================
-
-export const getAdminDashboard = async () => {
-  const response = await API.get(
-    "/admin/dashboard",
-    getConfig()
-  );
-
-  return response.data;
-};
-
-// =====================================
-// Get All Users
-// =====================================
-
-export const getAllUsers = async () => {
-  const response = await API.get(
-    "/admin/users",
-    getConfig()
-  );
-
-  return response.data;
-};
-
-// =====================================
-// Get All Owners
-// =====================================
-
-export const getAllOwners = async () => {
-  const response = await API.get(
-    "/admin/owners",
-    getConfig()
-  );
-
-  return response.data;
-};
-
-// =====================================
-// Get All Parking
-// =====================================
-
-export const getAllParking = async () => {
-  const response = await API.get(
-    "/admin/parking",
-    getConfig()
-  );
-
-  return response.data;
-};
-
-// =====================================
-// Get All Bookings
-// =====================================
-
-export const getAllBookings = async () => {
-  const response = await API.get(
-    "/admin/bookings",
-    getConfig()
-  );
-
-  return response.data;
-};
-
-// =====================================
-// Delete User
-// =====================================
-
-export const deleteUser = async (id) => {
-  if (!id) {
-    throw new Error("User ID is required");
+  if (loading) {
+    return (
+      <div className="admin-page-container">
+        <div className="admin-loading">
+          <div className="spinner-border text-warning" />
+          <h5>Loading Owners...</h5>
+        </div>
+      </div>
+    );
   }
 
-  const response = await API.delete(
-    `/admin/users/${id}`,
-    getConfig()
-  );
+  return (
+    <div className="admin-page-container">
+      <div className="admin-page-header">
+        <h1>Manage Owners</h1>
+        <Link to="/admin/dashboard" className="admin-back-btn">
+          <FaArrowLeft /> Back to Dashboard
+        </Link>
+      </div>
 
-  return response.data;
+      {owners.length === 0 ? (
+        <div className="admin-empty">
+          <FaUserTie />
+          <h3>No owners found</h3>
+        </div>
+      ) : (
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              {owners.map((owner) => (
+                <tr key={owner._id}>
+                  <td>{owner.name}</td>
+                  <td>{owner.email}</td>
+                  <td>{owner.phone || "N/A"}</td>
+                  <td>{new Date(owner.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
 };
+
+export default AdminOwners;

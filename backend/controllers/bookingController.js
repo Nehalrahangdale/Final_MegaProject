@@ -135,6 +135,7 @@ const createBooking = async (req, res) => {
             bookingDate: new Date(bookingDate),
             startTime,
             endTime,
+            duration: Number(duration),
             totalAmount: finalAmount,
             status: "Booked"
         });

@@ -10,6 +10,7 @@ const {
 const {
   getDashboard,
   getAllUsers,
+  getAllOwners,
   getAllParking,
   getAllBookings,
   deleteUser,
@@ -35,6 +36,17 @@ router.get(
   protect,
   authorize("admin"),
   getAllUsers
+);
+
+// =====================================
+// Owners
+// =====================================
+
+router.get(
+  "/owners",
+  protect,
+  authorize("admin"),
+  getAllOwners
 );
 
 // =====================================

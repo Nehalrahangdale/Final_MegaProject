@@ -73,13 +73,12 @@ const AdminBookings = () => {
                   <td>{booking.user?.name || "Unknown"}</td>
                   <td>{booking.parking?.name || "Unknown"}</td>
                   <td>
-                    {new Date(booking.startTime).toLocaleDateString()}
+                    {new Date(booking.bookingDate).toLocaleDateString()}
                   </td>
                   <td>
-                    {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
-                    {new Date(booking.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {booking.startTime} - {booking.endTime}
                   </td>
-                  <td>₹{booking.totalPrice}</td>
+                  <td>₹{booking.totalAmount}</td>
                   <td>
                     <span className={`status-badge ${booking.status.toLowerCase()}`}>
                       {booking.status}
