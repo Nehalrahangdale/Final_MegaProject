@@ -137,7 +137,10 @@ const getAllOwners = async (req, res) => {
 const getAllParking = async (req, res) => {
   try {
     const parking = await Parking.find()
-      .populate("owner", "name email phone")
+      .populate(
+        "owner",
+        "name email phone"
+      )
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -162,9 +165,18 @@ const getAllParking = async (req, res) => {
 const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find()
-      .populate("user", "name email phone")
-      .populate("parking", "name city address")
-      .populate("slot", "slotNumber vehicleType status")
+      .populate(
+        "user",
+        "name email phone"
+      )
+      .populate(
+        "parking",
+        "name city address"
+      )
+      .populate(
+        "slot",
+        "slotNumber vehicleType status"
+      )
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -183,12 +195,43 @@ const getAllBookings = async (req, res) => {
 };
 
 // =====================================
+// Get All Payments
+// =====================================
+
+const getAllPayments = async (req, res) => {
+  try {
+    const payments = await Payment.find()
+      .populate(
+        "user",
+        "name email phone"
+      )
+      .populate("booking")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: payments.length,
+      payments,
+    });
+  } catch (error) {
+    console.error("Get Payments Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// =====================================
 // Delete User
 // =====================================
 
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(
+      req.params.id
+    );
 
     if (!user) {
       return res.status(404).json({
@@ -201,7 +244,8 @@ const deleteUser = async (req, res) => {
     if (user.role === "admin") {
       return res.status(403).json({
         success: false,
-        message: "Admin account cannot be deleted.",
+        message:
+          "Admin account cannot be deleted.",
       });
     }
 
@@ -209,10 +253,14 @@ const deleteUser = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "User deleted successfully",
+      message:
+        "User deleted successfully",
     });
   } catch (error) {
-    console.error("Delete User Error:", error);
+    console.error(
+      "Delete User Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
@@ -231,5 +279,6 @@ module.exports = {
   getAllOwners,
   getAllParking,
   getAllBookings,
+  getAllPayments,
   deleteUser,
 };

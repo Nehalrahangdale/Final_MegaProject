@@ -31,16 +31,19 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminOwners from "./pages/admin/AdminOwners";
 import AdminParking from "./pages/admin/AdminParking";
 import AdminBookings from "./pages/admin/AdminBookings";
+import AdminPayments from "./pages/admin/AdminPayments";
 
 function App() {
   return (
     <BrowserRouter>
       <div className="App">
 
-        {/* Navbar */}
+        {/* ================= NAVBAR ================= */}
+
         <Navbar />
 
-        {/* Main Content */}
+        {/* ================= MAIN CONTENT ================= */}
+
         <main className="main-content">
 
           <Routes>
@@ -87,7 +90,8 @@ function App() {
               }
             />
 
-            {/* User Dashboard */}
+            {/* ================= USER DASHBOARD ================= */}
+
             <Route
               path="/user/dashboard"
               element={
@@ -97,7 +101,8 @@ function App() {
               }
             />
 
-            {/* Owner Dashboard */}
+            {/* ================= OWNER DASHBOARD ================= */}
+
             <Route
               path="/owner/dashboard"
               element={
@@ -159,6 +164,16 @@ function App() {
               }
             />
 
+            {/* Manage Payments */}
+            <Route
+              path="/admin/payments"
+              element={
+                <PrivateRoute allowedRoles={["admin"]}>
+                  <AdminPayments />
+                </PrivateRoute>
+              }
+            />
+
             {/* ================= UNAUTHORIZED ================= */}
 
             <Route
@@ -177,7 +192,8 @@ function App() {
 
         </main>
 
-        {/* Footer */}
+        {/* ================= FOOTER ================= */}
+
         <Footer />
 
       </div>

@@ -27,11 +27,16 @@ function AdminDashboard() {
   });
 
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     loadDashboard();
   }, []);
+
+  // =====================================
+  // Load Dashboard
+  // =====================================
 
   const loadDashboard = async () => {
     try {
@@ -39,9 +44,17 @@ function AdminDashboard() {
 
       const data = await getAdminDashboard();
 
-      setDashboard(
-        data.dashboard || {}
-      );
+      setDashboard({
+        totalUsers: data.dashboard?.totalUsers || 0,
+        totalOwners: data.dashboard?.totalOwners || 0,
+        totalParking: data.dashboard?.totalParking || 0,
+        totalBookings: data.dashboard?.totalBookings || 0,
+        totalSlots: data.dashboard?.totalSlots || 0,
+        totalRevenue: data.dashboard?.totalRevenue || 0,
+        activeBookings: data.dashboard?.activeBookings || 0,
+        completedBookings:
+          data.dashboard?.completedBookings || 0,
+      });
     } catch (error) {
       console.error(
         "Admin Dashboard Error:",
@@ -56,6 +69,10 @@ function AdminDashboard() {
       setLoading(false);
     }
   };
+
+  // =====================================
+  // Loading
+  // =====================================
 
   if (loading) {
     return (
@@ -79,7 +96,6 @@ function AdminDashboard() {
       <div className="admin-hero">
 
         <div>
-
           <div className="admin-badge">
             <FaChartLine />
             ADMIN PANEL
@@ -94,7 +110,6 @@ function AdminDashboard() {
             bookings and revenue from one
             central dashboard.
           </p>
-
         </div>
 
         <button
@@ -113,6 +128,7 @@ function AdminDashboard() {
 
       <div className="admin-stats">
 
+        {/* Users */}
         <div className="admin-stat blue">
 
           <div className="admin-stat-icon">
@@ -121,13 +137,15 @@ function AdminDashboard() {
 
           <div>
             <span>Total Users</span>
+
             <h2>
-              {dashboard.totalUsers || 0}
+              {dashboard.totalUsers}
             </h2>
           </div>
 
         </div>
 
+        {/* Owners */}
         <div className="admin-stat purple">
 
           <div className="admin-stat-icon">
@@ -136,13 +154,15 @@ function AdminDashboard() {
 
           <div>
             <span>Total Owners</span>
+
             <h2>
-              {dashboard.totalOwners || 0}
+              {dashboard.totalOwners}
             </h2>
           </div>
 
         </div>
 
+        {/* Parking */}
         <div className="admin-stat green">
 
           <div className="admin-stat-icon">
@@ -151,13 +171,15 @@ function AdminDashboard() {
 
           <div>
             <span>Total Parking</span>
+
             <h2>
-              {dashboard.totalParking || 0}
+              {dashboard.totalParking}
             </h2>
           </div>
 
         </div>
 
+        {/* Bookings */}
         <div className="admin-stat orange">
 
           <div className="admin-stat-icon">
@@ -166,13 +188,15 @@ function AdminDashboard() {
 
           <div>
             <span>Total Bookings</span>
+
             <h2>
-              {dashboard.totalBookings || 0}
+              {dashboard.totalBookings}
             </h2>
           </div>
 
         </div>
 
+        {/* Slots */}
         <div className="admin-stat red">
 
           <div className="admin-stat-icon">
@@ -181,13 +205,15 @@ function AdminDashboard() {
 
           <div>
             <span>Total Slots</span>
+
             <h2>
-              {dashboard.totalSlots || 0}
+              {dashboard.totalSlots}
             </h2>
           </div>
 
         </div>
 
+        {/* Revenue */}
         <div className="admin-stat revenue">
 
           <div className="admin-stat-icon">
@@ -196,8 +222,9 @@ function AdminDashboard() {
 
           <div>
             <span>Total Revenue</span>
+
             <h2>
-              ₹{dashboard.totalRevenue || 0}
+              ₹{dashboard.totalRevenue}
             </h2>
           </div>
 
@@ -206,7 +233,7 @@ function AdminDashboard() {
       </div>
 
       {/* ================================= */}
-      {/* Quick Overview */}
+      {/* Booking Overview */}
       {/* ================================= */}
 
       <div className="admin-section-title">
@@ -225,6 +252,7 @@ function AdminDashboard() {
 
       <div className="overview-grid">
 
+        {/* Active */}
         <div className="overview-card">
 
           <div className="overview-icon active">
@@ -237,12 +265,13 @@ function AdminDashboard() {
             </span>
 
             <strong>
-              {dashboard.activeBookings || 0}
+              {dashboard.activeBookings}
             </strong>
           </div>
 
         </div>
 
+        {/* Completed */}
         <div className="overview-card">
 
           <div className="overview-icon completed">
@@ -255,7 +284,7 @@ function AdminDashboard() {
             </span>
 
             <strong>
-              {dashboard.completedBookings || 0}
+              {dashboard.completedBookings}
             </strong>
           </div>
 
@@ -283,6 +312,7 @@ function AdminDashboard() {
 
       <div className="management-grid">
 
+        {/* Users */}
         <div className="management-card">
 
           <div className="management-icon blue-icon">
@@ -297,12 +327,17 @@ function AdminDashboard() {
             View and manage registered users.
           </p>
 
-          <button onClick={() => navigate("/admin/users")}>
+          <button
+            onClick={() =>
+              navigate("/admin/users")
+            }
+          >
             Manage Users
           </button>
 
         </div>
 
+        {/* Owners */}
         <div className="management-card">
 
           <div className="management-icon purple-icon">
@@ -318,12 +353,17 @@ function AdminDashboard() {
             accounts.
           </p>
 
-          <button onClick={() => navigate("/admin/owners")}>
+          <button
+            onClick={() =>
+              navigate("/admin/owners")
+            }
+          >
             Manage Owners
           </button>
 
         </div>
 
+        {/* Parking */}
         <div className="management-card">
 
           <div className="management-icon green-icon">
@@ -338,12 +378,17 @@ function AdminDashboard() {
             Monitor all parking locations.
           </p>
 
-          <button onClick={() => navigate("/admin/parking")}>
+          <button
+            onClick={() =>
+              navigate("/admin/parking")
+            }
+          >
             Manage Parking
           </button>
 
         </div>
 
+        {/* Bookings */}
         <div className="management-card">
 
           <div className="management-icon orange-icon">
@@ -358,12 +403,17 @@ function AdminDashboard() {
             View and manage customer bookings.
           </p>
 
-          <button onClick={() => navigate("/admin/bookings")}>
+          <button
+            onClick={() =>
+              navigate("/admin/bookings")
+            }
+          >
             Manage Bookings
           </button>
 
         </div>
 
+        {/* Payments */}
         <div className="management-card">
 
           <div className="management-icon revenue-icon">
@@ -378,7 +428,11 @@ function AdminDashboard() {
             Monitor payments and revenue.
           </p>
 
-          <button onClick={() => alert("Payment management is coming soon!")}>
+          <button
+            onClick={() =>
+              navigate("/admin/payments")
+            }
+          >
             Manage Payments
           </button>
 

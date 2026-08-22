@@ -19,12 +19,12 @@ const getConfig = () => {
 // =====================================
 
 export const getAdminDashboard = async () => {
-  const res = await API.get(
+  const response = await API.get(
     "/admin/dashboard",
     getConfig()
   );
 
-  return res.data;
+  return response.data;
 };
 
 // =====================================
@@ -32,12 +32,12 @@ export const getAdminDashboard = async () => {
 // =====================================
 
 export const getAllUsers = async () => {
-  const res = await API.get(
+  const response = await API.get(
     "/admin/users",
     getConfig()
   );
 
-  return res.data;
+  return response.data;
 };
 
 // =====================================
@@ -45,12 +45,12 @@ export const getAllUsers = async () => {
 // =====================================
 
 export const getAllOwners = async () => {
-  const res = await API.get(
+  const response = await API.get(
     "/admin/owners",
     getConfig()
   );
 
-  return res.data;
+  return response.data;
 };
 
 // =====================================
@@ -58,12 +58,12 @@ export const getAllOwners = async () => {
 // =====================================
 
 export const getAllParking = async () => {
-  const res = await API.get(
+  const response = await API.get(
     "/admin/parking",
     getConfig()
   );
 
-  return res.data;
+  return response.data;
 };
 
 // =====================================
@@ -71,12 +71,25 @@ export const getAllParking = async () => {
 // =====================================
 
 export const getAllBookings = async () => {
-  const res = await API.get(
+  const response = await API.get(
     "/admin/bookings",
     getConfig()
   );
 
-  return res.data;
+  return response.data;
+};
+
+// =====================================
+// Get All Payments
+// =====================================
+
+export const getAllPayments = async () => {
+  const response = await API.get(
+    "/admin/payments",
+    getConfig()
+  );
+
+  return response.data;
 };
 
 // =====================================
@@ -88,10 +101,10 @@ export const deleteUser = async (id) => {
     throw new Error("User ID is required");
   }
 
-  const res = await API.delete(
+  const response = await API.delete(
     `/admin/users/${id}`,
     getConfig()
   );
 
-  return res.data;
+  return response.data;
 };
