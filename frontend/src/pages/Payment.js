@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import {
@@ -22,11 +22,7 @@ function Payment() {
   // Load Booking
   // =====================================
 
-  useEffect(() => {
-    loadBooking();
-  }, [bookingId]);
-
-  const loadBooking = async () => {
+  const loadBooking = useCallback(async () => {
     try {
       if (!bookingId) {
         setLoading(false);
@@ -46,7 +42,11 @@ function Payment() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [bookingId]);
+
+  useEffect(() => {
+    loadBooking();
+  }, [loadBooking]);
 
   // =====================================
   // Handle Payment

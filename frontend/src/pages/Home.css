@@ -83,6 +83,7 @@ h1, h2, h3, h4, h5, h6, .display-3, .display-5 {
 .hero h1 span.text-warning {
   background: linear-gradient(90deg, #ff9a44, #fc6076);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -315,6 +316,7 @@ h1, h2, h3, h4, h5, h6, .display-3, .display-5 {
   font-weight: 800;
   background: linear-gradient(90deg, #1e3c72, #2a5298);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
 }

@@ -60,16 +60,17 @@ function OwnerDashboard() {
   // Load Data
   // =====================================
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = async () => {
     await Promise.all([
       loadMyParking(),
       loadDashboard(),
     ]);
   };
+
+  useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadMyParking = async () => {
     try {

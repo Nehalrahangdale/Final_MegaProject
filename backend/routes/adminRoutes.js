@@ -13,6 +13,7 @@ const {
   getAllOwners,
   getAllParking,
   getAllBookings,
+  getAllPayments,
   deleteUser,
 } = require("../controllers/adminController");
 
@@ -69,6 +70,17 @@ router.get(
   protect,
   authorize("admin"),
   getAllBookings
+);
+
+// =====================================
+// Payments
+// =====================================
+
+router.get(
+  "/payments",
+  protect,
+  authorize("admin"),
+  getAllPayments
 );
 
 // =====================================

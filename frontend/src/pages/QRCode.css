@@ -1,0 +1,666 @@
+/* =============================================
+   QR TICKET PAGE — Premium Dark Glassmorphism
+   ============================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap");
+
+/* ---- Page Wrapper ---- */
+.qr-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a1a 0%, #0d1b2e 40%, #0a1628 70%, #071220 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- Animated Background Orbs ---- */
+.qr-page::before {
+  content: "";
+  position: fixed;
+  top: -30%;
+  left: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(13, 110, 253, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatOrb 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.qr-page::after {
+  content: "";
+  position: fixed;
+  bottom: -25%;
+  right: -15%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(25, 135, 84, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatOrb 10s ease-in-out infinite alternate-reverse;
+  pointer-events: none;
+}
+
+@keyframes floatOrb {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, 20px) scale(1.1); }
+}
+
+/* ---- Grid Background ---- */
+.qr-grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(13, 110, 253, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13, 110, 253, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+/* ---- Loading State ---- */
+.qr-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a1a, #0d1b2e);
+  color: white;
+  gap: 20px;
+}
+
+.qr-loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 3px solid rgba(13, 110, 253, 0.2);
+  border-top-color: #0d6efd;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.qr-loading p {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+/* ---- Error State ---- */
+.qr-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a1a, #0d1b2e);
+  color: white;
+  gap: 16px;
+  text-align: center;
+  padding: 40px;
+}
+
+.qr-error-icon {
+  font-size: 64px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+.qr-error h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.qr-error p {
+  color: rgba(255,255,255,0.5);
+  font-size: 14px;
+  max-width: 320px;
+}
+
+.qr-back-btn {
+  background: linear-gradient(135deg, #0d6efd, #0a58ca);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qr-back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(13, 110, 253, 0.5);
+  color: white;
+}
+
+/* ---- Header ---- */
+.qr-header {
+  text-align: center;
+  margin-bottom: 36px;
+  position: relative;
+  z-index: 10;
+}
+
+.qr-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(13, 110, 253, 0.12);
+  border: 1px solid rgba(13, 110, 253, 0.3);
+  color: #60a5fa;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.qr-header h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.qr-header h1 span {
+  background: linear-gradient(135deg, #60a5fa, #34d399);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.qr-header p {
+  color: rgba(255, 255, 255, 0.45);
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+}
+
+/* ---- Main Ticket Card ---- */
+.qr-ticket {
+  width: 100%;
+  max-width: 560px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---- Ticket Header Strip ---- */
+.ticket-header-strip {
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 50%, #198754 100%);
+  padding: 28px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-header-strip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.ticket-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.ticket-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ticket-brand-icon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.ticket-brand-text h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ticket-brand-text p {
+  font-family: "Poppins", sans-serif;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.ticket-status-chip {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-family: "Poppins", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  backdrop-filter: blur(8px);
+  text-transform: uppercase;
+}
+
+.ticket-status-chip.paid {
+  background: rgba(25, 135, 84, 0.4);
+  border-color: rgba(25, 135, 84, 0.6);
+  color: #6ee7b7;
+}
+
+.ticket-parking-name {
+  margin-top: 20px;
+  position: relative;
+}
+
+.ticket-parking-name h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 4px 0;
+}
+
+.ticket-parking-name p {
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ---- Dashed Divider (tear line) ---- */
+.ticket-tear {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 0;
+}
+
+.ticket-tear-circle {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #0a0a1a, #0d1b2e);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ticket-tear-circle.left {
+  margin-left: -14px;
+}
+
+.ticket-tear-circle.right {
+  margin-right: -14px;
+}
+
+.ticket-tear-line {
+  flex: 1;
+  border-top: 2px dashed rgba(255, 255, 255, 0.1);
+  margin: 0 4px;
+}
+
+/* ---- QR Section ---- */
+.ticket-qr-section {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.qr-frame {
+  position: relative;
+  padding: 16px;
+  background: white;
+  border-radius: 20px;
+  box-shadow:
+    0 0 0 1px rgba(13, 110, 253, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(13, 110, 253, 0.08);
+  animation: qrGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes qrGlow {
+  from { box-shadow: 0 0 0 1px rgba(13,110,253,0.2), 0 8px 32px rgba(0,0,0,0.4), 0 0 30px rgba(13,110,253,0.06); }
+  to   { box-shadow: 0 0 0 1px rgba(13,110,253,0.4), 0 8px 40px rgba(0,0,0,0.5), 0 0 60px rgba(13,110,253,0.18); }
+}
+
+.qr-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: #0d6efd;
+  border-style: solid;
+  border-width: 0;
+}
+
+.qr-corner.tl { top: 6px; left: 6px;  border-top-width: 3px; border-left-width: 3px;  border-radius: 4px 0 0 0; }
+.qr-corner.tr { top: 6px; right: 6px; border-top-width: 3px; border-right-width: 3px; border-radius: 0 4px 0 0; }
+.qr-corner.bl { bottom: 6px; left: 6px;  border-bottom-width: 3px; border-left-width: 3px;  border-radius: 0 0 0 4px; }
+.qr-corner.br { bottom: 6px; right: 6px; border-bottom-width: 3px; border-right-width: 3px; border-radius: 0 0 4px 0; }
+
+.qr-scan-label {
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ---- Booking Details Grid ---- */
+.ticket-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  padding: 0 32px 24px;
+}
+
+.ticket-detail-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 14px 16px;
+  transition: all 0.25s ease;
+}
+
+.ticket-detail-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(13, 110, 253, 0.3);
+  transform: translateY(-1px);
+}
+
+.ticket-detail-item .detail-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Poppins", sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ticket-detail-item .detail-label svg,
+.ticket-detail-item .detail-label .detail-icon {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.ticket-detail-item .detail-value {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.3;
+}
+
+.ticket-detail-item.highlight {
+  background: rgba(25, 135, 84, 0.1);
+  border-color: rgba(25, 135, 84, 0.25);
+}
+
+.ticket-detail-item.highlight .detail-value {
+  color: #34d399;
+  font-size: 18px;
+}
+
+/* ---- Booking ID Bar ---- */
+.ticket-id-bar {
+  margin: 0 32px;
+  padding: 14px 20px;
+  background: rgba(13, 110, 253, 0.07);
+  border: 1px solid rgba(13, 110, 253, 0.2);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ticket-id-label {
+  font-family: "Poppins", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.ticket-id-value {
+  font-family: "Space Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #60a5fa;
+  letter-spacing: 1px;
+  word-break: break-all;
+  text-align: right;
+}
+
+/* ---- Action Buttons ---- */
+.ticket-actions {
+  display: flex;
+  gap: 12px;
+  padding: 24px 32px 32px;
+  flex-wrap: wrap;
+}
+
+.btn-download {
+  flex: 1;
+  min-width: 140px;
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+  letter-spacing: 0.3px;
+}
+
+.btn-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(13, 110, 253, 0.5);
+  background: linear-gradient(135deg, #1a7fff, #0d6efd);
+}
+
+.btn-download:active {
+  transform: translateY(0);
+}
+
+.btn-print {
+  flex: 1;
+  min-width: 140px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  letter-spacing: 0.3px;
+}
+
+.btn-print:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-back-dash {
+  width: 100%;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  border: none;
+  padding: 0 32px 8px;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.btn-back-dash:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---- Footer note ---- */
+.qr-footer-note {
+  margin-top: 28px;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 10;
+}
+
+.qr-footer-note a {
+  color: rgba(96, 165, 250, 0.5);
+  text-decoration: none;
+}
+
+/* ---- Print styles ---- */
+@media print {
+  .qr-page {
+    background: white !important;
+    padding: 0;
+  }
+
+  .qr-grid-bg,
+  .qr-header,
+  .ticket-actions,
+  .btn-back-dash,
+  .qr-footer-note {
+    display: none !important;
+  }
+
+  .qr-ticket {
+    background: white !important;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    border-radius: 16px !important;
+    max-width: 100% !important;
+  }
+
+  .ticket-detail-item {
+    background: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+  }
+
+  .ticket-detail-item .detail-label {
+    color: #6c757d !important;
+  }
+
+  .ticket-detail-item .detail-value {
+    color: #212529 !important;
+  }
+
+  .ticket-id-bar {
+    background: #f0f4ff !important;
+    border-color: #c0cfff !important;
+  }
+
+  .ticket-id-value {
+    color: #0d6efd !important;
+  }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .qr-header h1 { font-size: 26px; }
+  .ticket-header-strip { padding: 22px 22px; }
+  .ticket-qr-section { padding: 24px 22px; }
+  .ticket-details-grid { padding: 0 22px 18px; gap: 10px; }
+  .ticket-id-bar { margin: 0 22px; }
+  .ticket-actions { padding: 18px 22px 24px; }
+
+  .qr-frame canvas { width: 200px !important; height: 200px !important; }
+}

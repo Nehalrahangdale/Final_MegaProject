@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaUsers,
   FaUserTie,
@@ -8,6 +8,11 @@ import {
   FaRupeeSign,
   FaSyncAlt,
   FaChartLine,
+  FaCreditCard,
+  FaArrowRight,
+  FaShieldAlt,
+  FaCheckCircle,
+  FaClock,
 } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
@@ -27,7 +32,7 @@ function AdminDashboard() {
   });
 
   const [loading, setLoading] = useState(true);
-
+  const [refreshing, setRefreshing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,13 +40,11 @@ function AdminDashboard() {
   }, []);
 
   // =====================================
-  // Load Dashboard
+  // Load Dashboard Data
   // =====================================
-
   const loadDashboard = async () => {
     try {
-      setLoading(true);
-
+      setRefreshing(true);
       const data = await getAdminDashboard();
 
       setDashboard({
@@ -52,394 +55,259 @@ function AdminDashboard() {
         totalSlots: data.dashboard?.totalSlots || 0,
         totalRevenue: data.dashboard?.totalRevenue || 0,
         activeBookings: data.dashboard?.activeBookings || 0,
-        completedBookings:
-          data.dashboard?.completedBookings || 0,
+        completedBookings: data.dashboard?.completedBookings || 0,
       });
     } catch (error) {
-      console.error(
-        "Admin Dashboard Error:",
-        error
-      );
-
+      console.error("Admin Dashboard Error:", error);
       alert(
         error.response?.data?.message ||
-          "Unable to load admin dashboard."
+          "Unable to load admin dashboard data."
       );
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
-
-  // =====================================
-  // Loading
-  // =====================================
 
   if (loading) {
     return (
       <div className="admin-loading">
-        <div className="spinner-border text-success" />
-
-        <h5>
-          Loading Admin Dashboard...
-        </h5>
+        <div className="spinner-border text-success" role="status" />
+        <h5 className="mt-3 fw-bold text-dark">Loading Admin Dashboard...</h5>
+        <p className="text-muted">Fetching latest platform metrics & analytics.</p>
       </div>
     );
   }
 
   return (
     <div className="admin-dashboard">
-
       {/* ================================= */}
-      {/* Header */}
+      {/* Hero Banner                       */}
       {/* ================================= */}
-
       <div className="admin-hero">
-
         <div>
           <div className="admin-badge">
-            <FaChartLine />
-            ADMIN PANEL
+            <FaShieldAlt />
+            ADMINISTRATOR CONTROL PANEL
           </div>
 
-          <h1>
-            Admin Dashboard
-          </h1>
+          <h1>Smart Parking Dashboard</h1>
 
           <p>
-            Monitor users, owners, parking,
-            bookings and revenue from one
-            central dashboard.
+            Real-time analytics and central control for users, parking operators,
+            slot reservations, and payment settlements.
           </p>
         </div>
 
         <button
           className="admin-refresh"
           onClick={loadDashboard}
+          disabled={refreshing}
+          title="Sync latest live data"
         >
-          <FaSyncAlt />
-          Refresh
+          <FaSyncAlt className={refreshing ? "spin-icon" : ""} />
+          {refreshing ? "Updating..." : "Refresh Stats"}
         </button>
-
       </div>
 
       {/* ================================= */}
-      {/* Statistics */}
+      {/* Key Metrics / KPI Grid           */}
       {/* ================================= */}
-
       <div className="admin-stats">
-
-        {/* Users */}
-        <div className="admin-stat blue">
-
+        {/* Total Users */}
+        <div className="admin-stat blue" onClick={() => navigate("/admin/users")}>
           <div className="admin-stat-icon">
             <FaUsers />
           </div>
-
-          <div>
-            <span>Total Users</span>
-
-            <h2>
-              {dashboard.totalUsers}
-            </h2>
+          <div className="admin-stat-info">
+            <span>Total Customers</span>
+            <h2>{dashboard.totalUsers.toLocaleString()}</h2>
+            <small className="stat-link">Manage Users &rarr;</small>
           </div>
-
         </div>
 
-        {/* Owners */}
-        <div className="admin-stat purple">
-
+        {/* Total Owners */}
+        <div className="admin-stat purple" onClick={() => navigate("/admin/owners")}>
           <div className="admin-stat-icon">
             <FaUserTie />
           </div>
-
-          <div>
-            <span>Total Owners</span>
-
-            <h2>
-              {dashboard.totalOwners}
-            </h2>
+          <div className="admin-stat-info">
+            <span>Parking Owners</span>
+            <h2>{dashboard.totalOwners.toLocaleString()}</h2>
+            <small className="stat-link">Manage Owners &rarr;</small>
           </div>
-
         </div>
 
-        {/* Parking */}
-        <div className="admin-stat green">
-
+        {/* Total Parking Areas */}
+        <div className="admin-stat green" onClick={() => navigate("/admin/parking")}>
           <div className="admin-stat-icon">
             <FaParking />
           </div>
-
-          <div>
-            <span>Total Parking</span>
-
-            <h2>
-              {dashboard.totalParking}
-            </h2>
+          <div className="admin-stat-info">
+            <span>Parking Locations</span>
+            <h2>{dashboard.totalParking.toLocaleString()}</h2>
+            <small className="stat-link">Manage Parking &rarr;</small>
           </div>
-
         </div>
 
-        {/* Bookings */}
-        <div className="admin-stat orange">
-
+        {/* Total Bookings */}
+        <div className="admin-stat orange" onClick={() => navigate("/admin/bookings")}>
           <div className="admin-stat-icon">
             <FaCalendarCheck />
           </div>
-
-          <div>
+          <div className="admin-stat-info">
             <span>Total Bookings</span>
-
-            <h2>
-              {dashboard.totalBookings}
-            </h2>
+            <h2>{dashboard.totalBookings.toLocaleString()}</h2>
+            <small className="stat-link">Manage Bookings &rarr;</small>
           </div>
-
         </div>
 
-        {/* Slots */}
+        {/* Total Slots */}
         <div className="admin-stat red">
-
           <div className="admin-stat-icon">
             <FaCar />
           </div>
-
-          <div>
-            <span>Total Slots</span>
-
-            <h2>
-              {dashboard.totalSlots}
-            </h2>
+          <div className="admin-stat-info">
+            <span>Total Parking Slots</span>
+            <h2>{dashboard.totalSlots.toLocaleString()}</h2>
+            <small className="text-muted">Across all facilities</small>
           </div>
-
         </div>
 
-        {/* Revenue */}
-        <div className="admin-stat revenue">
-
+        {/* Total Revenue */}
+        <div className="admin-stat revenue" onClick={() => navigate("/admin/payments")}>
           <div className="admin-stat-icon">
             <FaRupeeSign />
           </div>
-
-          <div>
-            <span>Total Revenue</span>
-
-            <h2>
-              ₹{dashboard.totalRevenue}
+          <div className="admin-stat-info">
+            <span>Platform Revenue</span>
+            <h2 className="text-success">
+              ₹{Number(dashboard.totalRevenue || 0).toLocaleString("en-IN")}
             </h2>
+            <small className="stat-link">View Payments &rarr;</small>
           </div>
-
         </div>
-
       </div>
 
       {/* ================================= */}
-      {/* Booking Overview */}
+      {/* Booking Health Overview           */}
       {/* ================================= */}
-
       <div className="admin-section-title">
-
         <div>
-          <h2>
-            Booking Overview
-          </h2>
-
-          <p>
-            Current booking statistics
-          </p>
+          <h2>Booking Activity Overview</h2>
+          <p>Current operational status of parking reservations</p>
         </div>
-
       </div>
 
       <div className="overview-grid">
-
-        {/* Active */}
-        <div className="overview-card">
-
+        {/* Active Reservations */}
+        <div className="overview-card active-card" onClick={() => navigate("/admin/bookings")}>
           <div className="overview-icon active">
-            <FaCalendarCheck />
+            <FaClock />
           </div>
-
           <div>
-            <span>
-              Active Bookings
-            </span>
-
-            <strong>
-              {dashboard.activeBookings}
-            </strong>
+            <span>Active Ongoing Bookings</span>
+            <strong>{dashboard.activeBookings.toLocaleString()}</strong>
+            <p className="overview-subtext text-warning">Vehicles currently parked or reserved</p>
           </div>
-
         </div>
 
-        {/* Completed */}
-        <div className="overview-card">
-
+        {/* Completed Reservations */}
+        <div className="overview-card completed-card" onClick={() => navigate("/admin/bookings")}>
           <div className="overview-icon completed">
-            <FaCalendarCheck />
+            <FaCheckCircle />
           </div>
-
           <div>
-            <span>
-              Completed Bookings
-            </span>
-
-            <strong>
-              {dashboard.completedBookings}
-            </strong>
+            <span>Completed Reservations</span>
+            <strong>{dashboard.completedBookings.toLocaleString()}</strong>
+            <p className="overview-subtext text-success">Successfully fulfilled and settled</p>
           </div>
-
         </div>
-
       </div>
 
       {/* ================================= */}
-      {/* Management */}
+      {/* Management Quick Access           */}
       {/* ================================= */}
-
       <div className="admin-section-title">
-
         <div>
-          <h2>
-            Management
-          </h2>
-
-          <p>
-            Manage your Smart Parking system
-          </p>
+          <h2>Platform Management Modules</h2>
+          <p>Quick access to administration workflows and data records</p>
         </div>
-
       </div>
 
       <div className="management-grid">
-
-        {/* Users */}
+        {/* Customers */}
         <div className="management-card">
-
           <div className="management-icon blue-icon">
             <FaUsers />
           </div>
-
-          <h3>
-            Users
-          </h3>
-
-          <p>
-            View and manage registered users.
-          </p>
-
-          <button
-            onClick={() =>
-              navigate("/admin/users")
-            }
-          >
-            Manage Users
+          <h3>Customer Management</h3>
+          <p>Search, inspect profiles, and manage registered end-users.</p>
+          <button onClick={() => navigate("/admin/users")}>
+            Open Users <FaArrowRight className="ms-1" />
           </button>
-
         </div>
 
         {/* Owners */}
         <div className="management-card">
-
           <div className="management-icon purple-icon">
             <FaUserTie />
           </div>
-
-          <h3>
-            Owners
-          </h3>
-
-          <p>
-            Manage parking owners and their
-            accounts.
-          </p>
-
-          <button
-            onClick={() =>
-              navigate("/admin/owners")
-            }
-          >
-            Manage Owners
+          <h3>Parking Operators</h3>
+          <p>Manage verified parking facility owners and partner accounts.</p>
+          <button onClick={() => navigate("/admin/owners")}>
+            Open Owners <FaArrowRight className="ms-1" />
           </button>
-
         </div>
 
-        {/* Parking */}
+        {/* Facilities */}
         <div className="management-card">
-
           <div className="management-icon green-icon">
             <FaParking />
           </div>
-
-          <h3>
-            Parking
-          </h3>
-
-          <p>
-            Monitor all parking locations.
-          </p>
-
-          <button
-            onClick={() =>
-              navigate("/admin/parking")
-            }
-          >
-            Manage Parking
+          <h3>Parking Facilities</h3>
+          <p>Monitor parking locations, pricing rules, and slot capacities.</p>
+          <button onClick={() => navigate("/admin/parking")}>
+            Open Parking <FaArrowRight className="ms-1" />
           </button>
-
         </div>
 
         {/* Bookings */}
         <div className="management-card">
-
           <div className="management-icon orange-icon">
             <FaCalendarCheck />
           </div>
-
-          <h3>
-            Bookings
-          </h3>
-
-          <p>
-            View and manage customer bookings.
-          </p>
-
-          <button
-            onClick={() =>
-              navigate("/admin/bookings")
-            }
-          >
-            Manage Bookings
+          <h3>Bookings & Schedules</h3>
+          <p>Audit booking logs, timestamps, active schedules, and cancellations.</p>
+          <button onClick={() => navigate("/admin/bookings")}>
+            Open Bookings <FaArrowRight className="ms-1" />
           </button>
-
         </div>
 
         {/* Payments */}
         <div className="management-card">
-
           <div className="management-icon revenue-icon">
-            <FaRupeeSign />
+            <FaCreditCard />
           </div>
-
-          <h3>
-            Payments
-          </h3>
-
-          <p>
-            Monitor payments and revenue.
-          </p>
-
-          <button
-            onClick={() =>
-              navigate("/admin/payments")
-            }
-          >
-            Manage Payments
+          <h3>Payments & Revenue</h3>
+          <p>Track Razorpay gateway IDs, successful transactions, and refunds.</p>
+          <button onClick={() => navigate("/admin/payments")}>
+            Open Payments <FaArrowRight className="ms-1" />
           </button>
-
         </div>
 
+        {/* Analytics Shortcut */}
+        <div className="management-card analytics-card">
+          <div className="management-icon cyan-icon">
+            <FaChartLine />
+          </div>
+          <h3>System Analytics</h3>
+          <p>Platform health check: {dashboard.totalParking} lots across system.</p>
+          <button onClick={loadDashboard}>
+            Sync Analytics <FaSyncAlt className="ms-1" />
+          </button>
+        </div>
       </div>
-
     </div>
   );
 }

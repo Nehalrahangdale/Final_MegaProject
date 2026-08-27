@@ -149,19 +149,43 @@ function Contact() {
 
                   <div className="d-flex gap-3 fs-3">
 
-                    <a href="#" className="text-primary">
+                    <a
+                      href="https://facebook.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary"
+                      aria-label="Facebook"
+                    >
                       <FaFacebook />
                     </a>
 
-                    <a href="#" className="text-danger">
+                    <a
+                      href="https://instagram.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-danger"
+                      aria-label="Instagram"
+                    >
                       <FaInstagram />
                     </a>
 
-                    <a href="#" className="text-info">
+                    <a
+                      href="https://linkedin.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-info"
+                      aria-label="LinkedIn"
+                    >
                       <FaLinkedin />
                     </a>
 
-                    <a href="#" className="text-dark">
+                    <a
+                      href="https://github.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-dark"
+                      aria-label="GitHub"
+                    >
                       <FaGithub />
                     </a>
 

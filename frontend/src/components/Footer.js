@@ -99,25 +99,45 @@ function Footer() {
 
             <h5>Follow Us</h5>
 
-            <div className="mt-3">
-
-              <a href="#" className="social-icon">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                className="social-icon"
+                aria-label="Facebook"
+              >
                 <FaFacebook />
               </a>
 
-              <a href="#" className="social-icon">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="social-icon"
+                aria-label="Instagram"
+              >
                 <FaInstagram />
               </a>
 
-              <a href="#" className="social-icon">
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                className="social-icon"
+                aria-label="LinkedIn"
+              >
                 <FaLinkedin />
               </a>
 
-              <a href="#" className="social-icon">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noreferrer"
+                className="social-icon"
+                aria-label="GitHub"
+              >
                 <FaGithub />
               </a>
-
-            </div>
 
           </div>
 

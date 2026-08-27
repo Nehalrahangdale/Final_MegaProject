@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -20,11 +20,7 @@ function ParkingDetails() {
   const [parking, setParking] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadParking();
-  }, [id]);
-
-  const loadParking = async () => {
+  const loadParking = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -41,7 +37,11 @@ function ParkingDetails() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadParking();
+  }, [loadParking]);
 
   // ================= LOADING =================
 

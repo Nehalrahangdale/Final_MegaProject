@@ -25,6 +25,7 @@ import Unauthorized from "./pages/Unauthorized";
 import UserDashboard from "./pages/UserDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import QRCodePage from "./pages/QRCode";
 
 // Admin Management Pages
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -97,6 +98,17 @@ function App() {
               element={
                 <PrivateRoute allowedRoles={["user"]}>
                   <UserDashboard />
+                </PrivateRoute>
+              }
+            />
+
+            {/* ================= QR TICKET ================= */}
+
+            <Route
+              path="/qr-ticket"
+              element={
+                <PrivateRoute allowedRoles={["user"]}>
+                  <QRCodePage />
                 </PrivateRoute>
               }
             />

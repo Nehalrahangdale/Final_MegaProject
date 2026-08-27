@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaCalendarCheck,
   FaCar,
@@ -19,6 +20,7 @@ import {
 import "./UserDashboard.css";
 
 function UserDashboard() {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelLoading, setCancelLoading] = useState(null);
@@ -553,6 +555,24 @@ function UserDashboard() {
                   </strong>
 
                 </div>
+
+                {booking.paymentStatus === "Paid" && (
+                  <button
+                    className="cancel-btn"
+                    style={{
+                      background: "linear-gradient(135deg, #0d6efd, #0a58ca)",
+                      border: "none",
+                      marginRight: "8px"
+                    }}
+                    onClick={() =>
+                      navigate(
+                        `/qr-ticket?bookingId=${booking._id}`
+                      )
+                    }
+                  >
+                    🔲 View QR Ticket
+                  </button>
+                )}
 
                 {booking.status ===
                   "Booked" && (

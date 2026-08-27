@@ -1,6 +1,7 @@
 const Booking = require("../models/Booking");
 const Parking = require("../models/Parking");
 const Slot = require("../models/Slot");
+const qrService = require("../services/qrService");
 
 // =====================================================
 // CREATE BOOKING
@@ -427,11 +428,108 @@ const completeBooking = async (req, res) => {
 };
 
 
+// =====================================================
+// GET BOOKING QR CODE (DATA URL & PAYLOAD)
+// =====================================================
+const getBookingQR = async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id)
+            .populate("user", "name email phone")
+            .populate("parking", "name address city")
+            .populate("slot", "slotNumber vehicleType");
+
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found",
+            });
+        }
+
+        // Authorization check
+        if (
+            req.user.role === "user" &&
+            booking.user._id.toString() !== req.user._id.toString()
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied",
+            });
+        }
+
+        const qrData = await qrService.generateBookingQR(booking);
+
+        res.status(200).json({
+            success: true,
+            bookingId: booking._id,
+            payload: qrData.payload,
+            qrCodeDataUrl: qrData.qrCodeDataUrl,
+        });
+    } catch (error) {
+        console.error("Get Booking QR Error:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+// =====================================================
+// VERIFY SCANNED BOOKING QR
+// =====================================================
+const verifyBookingQR = async (req, res) => {
+    try {
+        const { qrData } = req.body;
+
+        if (!qrData) {
+            return res.status(400).json({
+                success: false,
+                message: "QR code data is required",
+            });
+        }
+
+        const decoded = qrService.verifyQRPayload(qrData);
+
+        if (!decoded.isValid) {
+            return res.status(400).json({
+                success: false,
+                message: decoded.message,
+            });
+        }
+
+        const booking = await Booking.findById(decoded.bookingId)
+            .populate("user", "name email phone")
+            .populate("parking", "name address city")
+            .populate("slot", "slotNumber vehicleType status");
+
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found in records",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "QR Ticket verified successfully",
+            booking,
+            ticketPayload: decoded.payload,
+        });
+    } catch (error) {
+        console.error("Verify QR Error:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 module.exports = {
     createBooking,
     getMyBookings,
     getBookingById,
     getAllBookings,
     cancelBooking,
-    completeBooking
+    completeBooking,
+    getBookingQR,
+    verifyBookingQR,
 };

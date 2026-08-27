@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   FaParking,
@@ -34,11 +34,7 @@ function Booking() {
   // LOAD PARKING + SLOTS
   // ==========================================
 
-  useEffect(() => {
-    loadBookingData();
-  }, [id]);
-
-  const loadBookingData = async () => {
+  const loadBookingData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -58,12 +54,17 @@ function Booking() {
 
       alert(
         error.response?.data?.message ||
-          "Unable to load booking details."
+          "Failed to load parking booking data."
       );
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadBookingData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   // ==========================================
   // CALCULATE AMOUNT

@@ -67,11 +67,15 @@ const getDashboard = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Admin Dashboard Error:", error);
+    console.error(
+      "Admin Dashboard Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to load admin dashboard",
+      error: error.message,
     });
   }
 };
@@ -94,11 +98,15 @@ const getAllUsers = async (req, res) => {
       users,
     });
   } catch (error) {
-    console.error("Get Users Error:", error);
+    console.error(
+      "Get Users Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to load users",
+      error: error.message,
     });
   }
 };
@@ -121,11 +129,15 @@ const getAllOwners = async (req, res) => {
       owners,
     });
   } catch (error) {
-    console.error("Get Owners Error:", error);
+    console.error(
+      "Get Owners Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to load owners",
+      error: error.message,
     });
   }
 };
@@ -149,11 +161,15 @@ const getAllParking = async (req, res) => {
       parking,
     });
   } catch (error) {
-    console.error("Get Parking Error:", error);
+    console.error(
+      "Get Parking Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to load parking",
+      error: error.message,
     });
   }
 };
@@ -185,11 +201,15 @@ const getAllBookings = async (req, res) => {
       bookings,
     });
   } catch (error) {
-    console.error("Get Bookings Error:", error);
+    console.error(
+      "Get Bookings Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to load bookings",
+      error: error.message,
     });
   }
 };
@@ -205,7 +225,21 @@ const getAllPayments = async (req, res) => {
         "user",
         "name email phone"
       )
-      .populate("booking")
+      .populate({
+        path: "booking",
+        populate: [
+          {
+            path: "parking",
+            select:
+              "name city address pricePerHour",
+          },
+          {
+            path: "slot",
+            select:
+              "slotNumber vehicleType status",
+          },
+        ],
+      })
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -214,11 +248,15 @@ const getAllPayments = async (req, res) => {
       payments,
     });
   } catch (error) {
-    console.error("Get Payments Error:", error);
+    console.error(
+      "Get Payments Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to load payments",
+      error: error.message,
     });
   }
 };
@@ -240,7 +278,7 @@ const deleteUser = async (req, res) => {
       });
     }
 
-    // Prevent deleting admin account
+    // Prevent deleting admin
     if (user.role === "admin") {
       return res.status(403).json({
         success: false,
@@ -264,7 +302,9 @@ const deleteUser = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message:
+        "Failed to delete user",
+      error: error.message,
     });
   }
 };
