@@ -21,7 +21,7 @@ import {
 
 import { getOwnerDashboard } from "../services/ownerService";
 
-import "./OwnerDashboard.css";
+import "../styles/OwnerDashboard.css";
 
 function OwnerDashboard() {
   const [formData, setFormData] = useState({

@@ -17,7 +17,7 @@ import {
   cancelBooking,
 } from "../services/bookingService";
 
-import "./UserDashboard.css";
+import "../styles/UserDashboard.css";
 
 function UserDashboard() {
   const navigate = useNavigate();

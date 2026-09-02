@@ -7,13 +7,17 @@ const Slot = require("../models/Slot");
 const Notification = require("../models/Notification");
 
 // ======================================
-// Razorpay Configuration
+// Helper: Razorpay Instance
 // ======================================
+const getRazorpayInstance = () => {
+  const key_id = process.env.RAZORPAY_KEY_ID || "rzp_test_placeholder";
+  const key_secret = process.env.RAZORPAY_KEY_SECRET || "rzp_secret_placeholder";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+  return new Razorpay({
+    key_id,
+    key_secret,
+  });
+};
 
 // ======================================
 // Create Razorpay Order
@@ -70,14 +74,33 @@ const createOrder = async (req, res) => {
     // Razorpay amount is in paise
     const amountInPaise = Math.round(amount * 100);
 
-    // Create Razorpay Order
-    const options = {
-      amount: amountInPaise,
-      currency: "INR",
-      receipt: `booking_${booking._id}`,
-    };
+    const isMockMode =
+      process.env.PAYMENT_MOCK === "true" ||
+      !process.env.RAZORPAY_KEY_ID ||
+      process.env.RAZORPAY_KEY_ID === "your_key_id" ||
+      process.env.RAZORPAY_KEY_ID.includes("placeholder");
 
-    const order = await razorpay.orders.create(options);
+    let order;
+
+    if (isMockMode) {
+      order = {
+        id: `order_mock_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        amount: amountInPaise,
+        currency: "INR",
+        receipt: `booking_${booking._id}`,
+        isMock: true,
+      };
+    } else {
+      // Create Razorpay Order
+      const options = {
+        amount: amountInPaise,
+        currency: "INR",
+        receipt: `booking_${booking._id}`,
+      };
+
+      const razorpay = getRazorpayInstance();
+      order = await razorpay.orders.create(options);
+    }
 
     // Save payment record
     const payment = await Payment.create({
@@ -90,7 +113,9 @@ const createOrder = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Razorpay order created successfully",
+      message: isMockMode
+        ? "Test payment order created (Mock Mode)"
+        : "Razorpay order created successfully",
       order,
       payment,
     });
@@ -99,7 +124,7 @@ const createOrder = async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message || "Failed to create payment order",
     });
   }
 };
@@ -128,26 +153,29 @@ const verifyPayment = async (req, res) => {
       });
     }
 
-    // Create signature
-    const body =
-      razorpay_order_id +
-      "|" +
-      razorpay_payment_id;
+    const isMockOrder = razorpay_order_id && razorpay_order_id.startsWith("order_mock_");
 
-    const expectedSignature = crypto
-      .createHmac(
-        "sha256",
-        process.env.RAZORPAY_KEY_SECRET
-      )
-      .update(body)
-      .digest("hex");
+    if (!isMockOrder) {
+      // Create signature
+      const body =
+        razorpay_order_id +
+        "|" +
+        razorpay_payment_id;
 
-    // Verify signature
-    if (expectedSignature !== razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        message: "Payment Verification Failed",
-      });
+      const secret = process.env.RAZORPAY_KEY_SECRET || "rzp_secret_placeholder";
+
+      const expectedSignature = crypto
+        .createHmac("sha256", secret)
+        .update(body)
+        .digest("hex");
+
+      // Verify signature
+      if (expectedSignature !== razorpay_signature) {
+        return res.status(400).json({
+          success: false,
+          message: "Payment Verification Failed",
+        });
+      }
     }
 
     // Find payment
@@ -183,15 +211,12 @@ const verifyPayment = async (req, res) => {
 
     // Update payment
     payment.status = "Success";
-    payment.razorpayPaymentId =
-      razorpay_payment_id;
+    payment.razorpayPaymentId = razorpay_payment_id;
 
     await payment.save();
 
     // Find booking
-    const booking = await Booking.findById(
-      payment.booking
-    );
+    const booking = await Booking.findById(payment.booking);
 
     if (!booking) {
       return res.status(404).json({
@@ -208,13 +233,10 @@ const verifyPayment = async (req, res) => {
     await booking.save();
 
     // Find slot
-    const slot = await Slot.findById(
-      booking.slot
-    );
+    const slot = await Slot.findById(booking.slot);
 
     if (slot) {
       slot.status = "Booked";
-
       await slot.save();
     }
 
@@ -286,9 +308,7 @@ const getAllPayments = async (req, res) => {
 
 const getPaymentById = async (req, res) => {
   try {
-    const payment = await Payment.findById(
-      req.params.id
-    )
+    const payment = await Payment.findById(req.params.id)
       .populate("user", "name email phone")
       .populate({
         path: "booking",

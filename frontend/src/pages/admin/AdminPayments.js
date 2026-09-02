@@ -15,8 +15,8 @@ import {
 } from "react-icons/fa";
 
 import { getAllPayments } from "../../services/adminService";
-import "./AdminPages.css";
-import "./AdminPayments.css";
+import "../../styles/admin/AdminPages.css";
+import "../../styles/admin/AdminPayments.css";
 
 // =============================================
 // Helper: format rupees (handles paise if > 10000)

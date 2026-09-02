@@ -77,6 +77,35 @@ function Payment() {
       );
 
       // =====================================
+      // Check for Mock Test Mode
+      // =====================================
+      if (data.order?.isMock) {
+        setTimeout(async () => {
+          try {
+            const verifyData = await verifyPayment({
+              razorpay_order_id: data.order.id,
+              razorpay_payment_id: `pay_mock_${Date.now()}`,
+              razorpay_signature: "mock_signature_test",
+            });
+
+            if (!verifyData.success) {
+              throw new Error(
+                verifyData.message || "Payment verification failed."
+              );
+            }
+
+            alert("Payment Successful! (Test Mode) Booking Confirmed.");
+            navigate(`/qr-ticket?bookingId=${booking._id}`);
+          } catch (err) {
+            console.error("Mock Verification Error:", err);
+            alert(err.response?.data?.message || err.message || "Payment verification failed.");
+            setPaymentLoading(false);
+          }
+        }, 1000);
+        return;
+      }
+
+      // =====================================
       // Razorpay Options
       // =====================================
 
@@ -117,7 +146,7 @@ function Payment() {
               "Payment Successful! Booking Confirmed."
             );
 
-            navigate("/user/dashboard");
+            navigate(`/qr-ticket?bookingId=${booking._id}`);
           } catch (error) {
             console.error(
               "Payment Verification Error:",

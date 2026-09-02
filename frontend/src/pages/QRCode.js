@@ -8,7 +8,7 @@ import {
   downloadQRTicket,
   printQRTicket,
 } from "../services/qrService";
-import "./QRCode.css";
+import "../styles/QRCode.css";
 
 // =============================================
 // Icon Components (inline SVG)

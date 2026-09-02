@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // CSS
-import "./App.css";
+import "./styles/App.css";
 
 // Components
 import Navbar from "./components/Navbar";
@@ -24,10 +24,10 @@ import Unauthorized from "./pages/Unauthorized";
 // Dashboard Pages
 import UserDashboard from "./pages/UserDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
 import QRCodePage from "./pages/QRCode";
 
 // Admin Management Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminOwners from "./pages/admin/AdminOwners";
 import AdminParking from "./pages/admin/AdminParking";

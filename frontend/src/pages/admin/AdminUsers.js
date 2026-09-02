@@ -15,7 +15,7 @@ import {
   deleteUser,
 } from "../../services/adminService";
 
-import "./AdminPages.css";
+import "../../styles/admin/AdminPages.css";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);

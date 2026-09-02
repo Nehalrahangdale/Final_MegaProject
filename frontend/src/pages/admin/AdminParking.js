@@ -11,7 +11,7 @@ import {
 
 import { getAllParking } from "../../services/adminService";
 
-import "./AdminPages.css";
+import "../../styles/admin/AdminPages.css";
 
 const AdminParking = () => {
   const [parkings, setParkings] = useState([]);

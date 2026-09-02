@@ -1,9 +1,11 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-// Load Environment Variables
+// Load Environment Variables (support both backend/.env and current dir .env)
+dotenv.config({ path: path.join(__dirname, ".env") });
 dotenv.config();
 
 // Database Connection
@@ -18,7 +20,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
     credentials: true,
   })
 );
@@ -81,11 +83,12 @@ app.use((req, res) => {
 // =======================
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("Global error handler:", err.stack || err.message);
 
   res.status(500).json({
     success: false,
     message: "Internal Server Error",
+    error: err.message,
   });
 });
 

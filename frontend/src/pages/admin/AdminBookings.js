@@ -14,8 +14,8 @@ import {
 } from "react-icons/fa";
 
 import { getAllBookings } from "../../services/adminService";
-import "./AdminPages.css";
-import "./AdminPayments.css";
+import "../../styles/admin/AdminPages.css";
+import "../../styles/admin/AdminPayments.css";
 
 const AdminBookings = () => {
   const navigate = useNavigate();

@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa";
 
 import { getAllOwners, deleteUser } from "../../services/adminService";
-import "./AdminPages.css";
+import "../../styles/admin/AdminPages.css";
 
 const AdminOwners = () => {
   const [owners, setOwners] = useState([]);

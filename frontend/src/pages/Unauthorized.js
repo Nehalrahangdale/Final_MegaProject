@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { FaLock, FaHome, FaArrowLeft } from "react-icons/fa";
-import "./Unauthorized.css";
+import "../styles/Unauthorized.css";
 
 function Unauthorized() {
   const navigate = useNavigate();
