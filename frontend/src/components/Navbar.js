@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaParking, FaUserCircle, FaUsers, FaCalendarCheck, FaShieldAlt } from "react-icons/fa";
+import { FaUserCircle, FaUsers, FaCalendarCheck, FaShieldAlt } from "react-icons/fa";
 import { MdLocalParking } from "react-icons/md";
+import NextParkLogo from "./NextParkLogo";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -55,11 +56,11 @@ function Navbar() {
 
         {/* Logo */}
         <Link
-          className="navbar-brand fw-bold"
+          className="navbar-brand d-flex align-items-center py-1"
           to="/"
+          title="NextPark AI - Smart Parking System"
         >
-          <FaParking className="me-2 text-warning" />
-          Smart Parking
+          <NextParkLogo variant="compact" height={36} animated={true} />
         </Link>
 
         {/* Mobile Toggle */}

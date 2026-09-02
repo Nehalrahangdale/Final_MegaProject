@@ -55,6 +55,20 @@ const parkingSchema = new mongoose.Schema(
         required: true
     },
 
+    // ==============================
+    // Map Coordinates
+    // ==============================
+
+    latitude: {
+        type: Number,
+        default: null,
+    },
+
+    longitude: {
+        type: Number,
+        default: null,
+    },
+
     rating: {
         type: Number,
         default: 0

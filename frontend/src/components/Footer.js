@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
+import NextParkLogo from "./NextParkLogo";
 
 function Footer() {
   return (
@@ -22,9 +23,9 @@ function Footer() {
 
           <div className="col-lg-4 mb-4">
 
-            <h3 className="fw-bold text-warning">
-              🚗 NextPark AI
-            </h3>
+            <div className="mb-3">
+              <NextParkLogo variant="full" height={44} animated={true} />
+            </div>
 
             <p className="mt-3">
               Smart Parking Solution powered by AI.

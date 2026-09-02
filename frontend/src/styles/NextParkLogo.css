@@ -1,0 +1,47 @@
+/* =========================================================
+   NextPark AI - Official Brand Logo Styles
+   ========================================================= */
+
+.np-logo-container {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+  vertical-align: middle;
+}
+
+.np-logo-container:hover {
+  transform: translateY(-1px);
+}
+
+.np-logo-container.np-animated:hover .np-logo-svg {
+  filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.45));
+}
+
+.np-logo-svg {
+  display: block;
+  overflow: visible;
+  transition: filter 0.25s ease;
+}
+
+/* Badge (Raster 3D Render) Variant */
+.np-logo-badge {
+  display: inline-block;
+  object-fit: contain;
+  transition: transform 0.25s ease, filter 0.25s ease;
+  filter: drop-shadow(0 4px 14px rgba(0, 102, 255, 0.2));
+}
+
+.np-logo-badge:hover {
+  filter: drop-shadow(0 6px 20px rgba(0, 210, 255, 0.45));
+}
+
+/* Light Theme Overrides */
+.np-theme-light text.np-brand-text {
+  fill: #0F172A !important;
+}
+
+.np-theme-light text.np-tagline-text {
+  fill: #475569 !important;
+}

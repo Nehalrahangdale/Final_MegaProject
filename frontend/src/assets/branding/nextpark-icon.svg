@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="100%" height="100%">
+  <defs>
+    <!-- Background subtle radial glow -->
+    <radialGradient id="npGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00D2FF" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#0066FF" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#001133" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Main Blue Metallic Gradients -->
+    <linearGradient id="npBlueGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="30%" stop-color="#0080FF"/>
+      <stop offset="100%" stop-color="#0040C8"/>
+    </linearGradient>
+
+    <linearGradient id="npBlueGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#002B80"/>
+      <stop offset="60%" stop-color="#0066FF"/>
+      <stop offset="100%" stop-color="#38B6FF"/>
+    </linearGradient>
+
+    <!-- Scanner Cone Gradient -->
+    <linearGradient id="npScanGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#00F0FF" stop-opacity="0.05"/>
+    </linearGradient>
+
+    <!-- Road Gradient -->
+    <linearGradient id="npRoadGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A1628"/>
+      <stop offset="100%" stop-color="#020814"/>
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="npNeonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient Glow -->
+  <circle cx="80" cy="80" r="72" fill="url(#npGlow)" />
+
+  <!-- Speed Lines (Left of N) -->
+  <g opacity="0.95">
+    <rect x="10" y="52" width="22" height="4.5" rx="2.25" fill="#00D2FF" filter="url(#npNeonGlow)"/>
+    <rect x="6" y="61" width="26" height="5" rx="2.5" fill="#00F0FF"/>
+    <rect x="14" y="71" width="20" height="4.5" rx="2.25" fill="#0088FF"/>
+    <circle cx="20" cy="63.5" r="2" fill="#FFFFFF"/>
+    <rect x="12" y="80" width="18" height="4" rx="2" fill="#00D2FF"/>
+  </g>
+
+  <!-- Main 'NP' Architectural Structure -->
+  <!-- Left Stem of N -->
+  <path d="M 32 36 L 50 36 L 50 114 L 32 114 Z" fill="url(#npBlueGrad1)" />
+
+  <!-- N Diagonal / Fold -->
+  <path d="M 48 36 L 76 96 L 76 114 L 46 54 Z" fill="url(#npBlueGrad2)" opacity="0.95"/>
+
+  <!-- P Outer Arch (Interlocking with N) -->
+  <path d="M 68 36 L 118 36 C 142 36, 146 54, 146 76 C 146 98, 138 114, 114 114 L 72 114 L 72 96 L 112 96 C 126 96, 128 88, 128 76 C 128 62, 122 54, 108 54 L 68 54 Z" 
+        fill="url(#npBlueGrad1)" filter="url(#npNeonGlow)"/>
+
+  <!-- Inner Smart Parking Garage Chamber (inside the P loop) -->
+  <g clip-path="url(#pChamberClip)">
+    <clipPath id="pChamberClip">
+      <path d="M 76 48 L 112 48 C 126 48, 132 58, 132 76 C 132 94, 124 102, 108 102 L 76 102 Z"/>
+    </clipPath>
+
+    <!-- Chamber Background -->
+    <rect x="70" y="44" width="70" height="64" fill="#040914"/>
+
+    <!-- Ceiling AI Camera Beam -->
+    <polygon points="104 48, 88 88, 120 88" fill="url(#npScanGrad)" />
+    <!-- Camera Sensor Dome -->
+    <ellipse cx="104" cy="49" rx="4" ry="2.5" fill="#00F0FF" filter="url(#npNeonGlow)"/>
+
+    <!-- Approaching Smart Road -->
+    <path d="M 74 104 Q 92 84, 104 82 Q 116 84, 134 104 Z" fill="url(#npRoadGrad)" />
+    <!-- Road Lane Dash -->
+    <path d="M 104 84 L 104 90 M 104 94 L 104 102" stroke="#FFFFFF" stroke-width="1.2" stroke-dasharray="2 2"/>
+
+    <!-- Futuristic Autonomous Car Silhouette -->
+    <g transform="translate(94, 73)">
+      <!-- Car Body Roof & Windshield -->
+      <path d="M 4 8 L 7 3 L 13 3 L 16 8 Z" fill="#E2E8F0"/>
+      <!-- Car Lower Body -->
+      <rect x="2" y="7.5" width="16" height="5" rx="1.5" fill="#FFFFFF"/>
+      <!-- Headlights Neon Cyan -->
+      <ellipse cx="4.5" cy="9.5" rx="1.5" ry="1" fill="#00F0FF" filter="url(#npNeonGlow)"/>
+      <ellipse cx="15.5" cy="9.5" rx="1.5" ry="1" fill="#00F0FF" filter="url(#npNeonGlow)"/>
+      <!-- Grille & Bumper -->
+      <rect x="7" y="9" width="6" height="2" rx="0.5" fill="#0A1128"/>
+      <!-- AI Target Box around car -->
+      <path d="M 0 3 L 2 3 M 0 3 L 0 5 M 20 3 L 18 3 M 20 3 L 20 5 M 0 13 L 2 13 M 0 13 L 0 11 M 20 13 L 18 13 M 20 13 L 20 11" 
+            stroke="#00F0FF" stroke-width="0.8" fill="none"/>
+    </g>
+
+    <!-- Smart Digital Parking Indicator Pillar (Right side) -->
+    <rect x="122" y="66" width="7" height="18" rx="1.2" fill="#07101E" stroke="#0080FF" stroke-width="0.6"/>
+    <text x="125.5" y="73" fill="#00D2FF" font-family="Arial, sans-serif" font-weight="900" font-size="5" text-anchor="middle">P</text>
+    <rect x="123" y="75" width="5" height="4" rx="0.5" fill="#00E676"/>
+    <text x="125.5" y="78.2" fill="#00240E" font-family="Arial, sans-serif" font-weight="bold" font-size="3" text-anchor="middle">12</text>
+  </g>
+
+  <!-- Glowing Curving Road Extension (flowing out of P to bottom-left) -->
+  <path d="M 108 102 Q 86 104, 66 112 Q 54 118, 44 126 L 80 126 Q 94 116, 114 114 Z" fill="url(#npBlueGrad1)" opacity="0.8"/>
+  <path d="M 44 126 Q 66 114, 98 106" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.9"/>
+
+  <!-- Glowing GPS Map Pin -->
+  <g transform="translate(68, 98)">
+    <circle cx="6" cy="6" r="6" fill="#00D2FF" opacity="0.3" filter="url(#npNeonGlow)"/>
+    <path d="M 6 0 C 3.2 0, 1 2.2, 1 5 C 1 8.5, 6 14, 6 14 C 6 14, 11 8.5, 11 5 C 11 2.2, 8.8 0, 6 0 Z" fill="url(#npBlueGrad1)"/>
+    <circle cx="6" cy="4.8" r="2.2" fill="#FFFFFF"/>
+  </g>
+</svg>

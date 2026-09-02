@@ -31,6 +31,8 @@ mongoose
       pricePerHour: 50,
       totalSlots: 10,
       availableSlots: 10,
+      latitude: 21.1458,
+      longitude: 79.0882,
       rating: 4.5,
       owner: user._id,
     });

@@ -8,9 +8,11 @@ import {
   FaStar,
   FaFilter,
   FaSyncAlt,
+  FaMapMarkedAlt,
 } from "react-icons/fa";
 
 import { getAllParking } from "../services/parkingService";
+import { ParkingMap } from "../components";
 
 function ParkingList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,6 +28,7 @@ function ParkingList() {
   const [vehicleType, setVehicleType] = useState(initialVehicle);
   const [maxPrice, setMaxPrice] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [showMap, setShowMap] = useState(true);
 
   // Keep state synced if URL params change
   useEffect(() => {
@@ -235,8 +238,41 @@ function ParkingList() {
         </div>
       </div>
 
+      {/* ================= INTERACTIVE MAP SECTION ================= */}
+      <section className="container mt-4 mb-2">
+        <div
+          className="card border-0 shadow-sm"
+          style={{ borderRadius: "16px", overflow: "hidden" }}
+        >
+          <div className="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+            <div className="d-flex align-items-center gap-2">
+              <FaMapMarkedAlt className="text-primary fs-5" />
+              <div>
+                <h5 className="mb-0 fw-bold">Live Parking Map</h5>
+                <small className="text-muted">
+                  Click on any marker to view parking details, rates, and direct booking
+                </small>
+              </div>
+            </div>
+
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => setShowMap(!showMap)}
+            >
+              {showMap ? "Hide Map" : "Show Map"}
+            </button>
+          </div>
+
+          {showMap && (
+            <div className="p-3 bg-light">
+              <ParkingMap parking={filteredParking} height="430px" />
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ================= PARKING RESULTS ================= */}
-      <section className="container py-5">
+      <section className="container py-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h3 className="fw-bold mb-1">Available Parking</h3>
@@ -301,6 +337,14 @@ function ParkingList() {
                       {item.address ? `${item.address}, ` : ""}
                       {item.city}
                     </p>
+
+                    {item.latitude && item.longitude && (
+                      <div className="mb-2">
+                        <span className="badge bg-light text-primary border px-2 py-1" style={{ fontSize: "11px" }}>
+                          📍 Lat: {Number(item.latitude).toFixed(3)}, Lng: {Number(item.longitude).toFixed(3)}
+                        </span>
+                      </div>
+                    )}
 
                     <p className="mb-2">
                       <FaCar className="text-primary me-2" />

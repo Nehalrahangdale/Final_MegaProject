@@ -1,22 +1,73 @@
 const Parking = require("../models/Parking");
+const cloudinary = require("../config/cloudinary");
 
 // ==============================
 // Add Parking
 // ==============================
 const addParking = async (req, res) => {
   try {
+    let imageUrl = req.body.image || "";
+
+    // Upload image to Cloudinary
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "nextpark-ai/parking",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+
+        uploadStream.end(req.file.buffer);
+      });
+
+      imageUrl = result.secure_url;
+    }
+
+    const parkingData = { ...req.body };
+
+    if (
+      parkingData.latitude === "" ||
+      parkingData.latitude === "null" ||
+      parkingData.latitude === undefined
+    ) {
+      parkingData.latitude = null;
+    } else if (parkingData.latitude !== null) {
+      parkingData.latitude = Number(parkingData.latitude);
+    }
+
+    if (
+      parkingData.longitude === "" ||
+      parkingData.longitude === "null" ||
+      parkingData.longitude === undefined
+    ) {
+      parkingData.longitude = null;
+    } else if (parkingData.longitude !== null) {
+      parkingData.longitude = Number(parkingData.longitude);
+    }
+
     const parking = await Parking.create({
-      ...req.body,
+      ...parkingData,
+      image: imageUrl,
       owner: req.user._id,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Parking Added Successfully",
       parking,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Add Parking Error:", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -123,9 +174,53 @@ const updateParking = async (req, res) => {
       });
     }
 
+    let updateData = { ...req.body };
+
+    if (
+      updateData.latitude === "" ||
+      updateData.latitude === "null" ||
+      updateData.latitude === undefined
+    ) {
+      updateData.latitude = null;
+    } else if (updateData.latitude !== null) {
+      updateData.latitude = Number(updateData.latitude);
+    }
+
+    if (
+      updateData.longitude === "" ||
+      updateData.longitude === "null" ||
+      updateData.longitude === undefined
+    ) {
+      updateData.longitude = null;
+    } else if (updateData.longitude !== null) {
+      updateData.longitude = Number(updateData.longitude);
+    }
+
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "nextpark-ai/parking",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+
+        uploadStream.end(req.file.buffer);
+      });
+
+      updateData.image = result.secure_url;
+    }
+
     const updatedParking = await Parking.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       {
         new: true,
         runValidators: true,

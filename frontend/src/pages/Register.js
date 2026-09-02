@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../services/authService";
+import NextParkLogo from "../components/NextParkLogo";
 
 function Register() {
   const navigate = useNavigate();
@@ -63,6 +64,10 @@ function Register() {
         <div className="col-md-6">
 
           <div className="card shadow-lg border-0 p-4">
+
+            <div className="text-center mb-3">
+              <NextParkLogo variant="compact" height={36} theme="light" animated={true} />
+            </div>
 
             <h2 className="text-center mb-4">
               📝 Create Account

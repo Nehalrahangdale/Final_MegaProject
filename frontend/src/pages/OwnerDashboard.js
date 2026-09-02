@@ -35,6 +35,8 @@ function OwnerDashboard() {
     vehicleType: "Car",
     description: "",
     image: "",
+    latitude: "",
+    longitude: "",
   });
 
   const [myParking, setMyParking] = useState([]);
@@ -55,6 +57,35 @@ function OwnerDashboard() {
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const [detectingLocation, setDetectingLocation] = useState(false);
+
+  // Auto-detect current coordinates for parking location
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setDetectingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData((prev) => ({
+          ...prev,
+          latitude: position.coords.latitude.toFixed(6),
+          longitude: position.coords.longitude.toFixed(6),
+        }));
+        setDetectingLocation(false);
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Could not fetch your location. Please enter coordinates manually.");
+        setDetectingLocation(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   // =====================================
   // Load Data
@@ -129,8 +160,12 @@ function OwnerDashboard() {
       vehicleType: "Car",
       description: "",
       image: "",
+      latitude: "",
+      longitude: "",
     });
 
+    setImageFile(null);
+    setImagePreview("");
     setEditingId(null);
   };
 
@@ -158,28 +193,63 @@ function OwnerDashboard() {
         return;
       }
 
-      const parkingData = {
-        name: formData.name.trim(),
-        address: formData.address.trim(),
-        city: formData.city.trim(),
-        state: formData.state.trim(),
-        pricePerHour: Number(formData.pricePerHour),
-        totalSlots,
-        availableSlots,
-        vehicleType: formData.vehicleType,
-        description: formData.description.trim(),
-        image: formData.image.trim(),
-      };
+      const latVal =
+        formData.latitude !== "" &&
+        formData.latitude !== null &&
+        !isNaN(Number(formData.latitude))
+          ? Number(formData.latitude)
+          : null;
+
+      const lngVal =
+        formData.longitude !== "" &&
+        formData.longitude !== null &&
+        !isNaN(Number(formData.longitude))
+          ? Number(formData.longitude)
+          : null;
+
+      let payload;
+
+      if (imageFile) {
+        const formDataObj = new FormData();
+        formDataObj.append("name", formData.name.trim());
+        formDataObj.append("address", formData.address.trim());
+        formDataObj.append("city", formData.city.trim());
+        formDataObj.append("state", formData.state.trim());
+        formDataObj.append("pricePerHour", Number(formData.pricePerHour));
+        formDataObj.append("totalSlots", totalSlots);
+        formDataObj.append("availableSlots", availableSlots);
+        formDataObj.append("vehicleType", formData.vehicleType);
+        formDataObj.append("description", formData.description.trim());
+        if (latVal !== null) formDataObj.append("latitude", latVal);
+        if (lngVal !== null) formDataObj.append("longitude", lngVal);
+        formDataObj.append("image", imageFile);
+        payload = formDataObj;
+      } else {
+        payload = {
+          name: formData.name.trim(),
+          address: formData.address.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim(),
+          pricePerHour: Number(formData.pricePerHour),
+          totalSlots,
+          availableSlots,
+          vehicleType: formData.vehicleType,
+          description: formData.description.trim(),
+          image: formData.image.trim(),
+          latitude: latVal,
+          longitude: lngVal,
+        };
+      }
 
       let data;
 
       if (editingId) {
         data = await updateParking(
           editingId,
-          parkingData
+          payload
         );
       } else {
-        data = await addParking(parkingData);
+        data = await addParking(payload);
       }
 
       alert(
@@ -219,7 +289,18 @@ function OwnerDashboard() {
       vehicleType: parking.vehicleType || "Car",
       description: parking.description || "",
       image: parking.image || "",
+      latitude:
+        parking.latitude !== null && parking.latitude !== undefined
+          ? parking.latitude
+          : "",
+      longitude:
+        parking.longitude !== null && parking.longitude !== undefined
+          ? parking.longitude
+          : "",
     });
+
+    setImageFile(null);
+    setImagePreview(parking.image || "");
 
     window.scrollTo({
       top: 0,
@@ -584,18 +665,107 @@ function OwnerDashboard() {
               />
             </div>
 
+            <div className="form-group">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                <label style={{ margin: 0 }}>Latitude</label>
+                <button
+                  type="button"
+                  onClick={handleGetCurrentLocation}
+                  disabled={detectingLocation}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#2563eb",
+                    cursor: "pointer",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    padding: 0,
+                  }}
+                >
+                  {detectingLocation ? "Detecting..." : "📍 Detect Location"}
+                </button>
+              </div>
+
+              <input
+                type="number"
+                step="any"
+                name="latitude"
+                placeholder="e.g. 21.1458"
+                value={formData.latitude}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Longitude</label>
+
+              <input
+                type="number"
+                step="any"
+                name="longitude"
+                placeholder="e.g. 79.0882"
+                value={formData.longitude}
+                onChange={handleChange}
+              />
+            </div>
+
           </div>
 
           <div className="form-group full">
-            <label>Image URL</label>
+            <label>Parking Image</label>
 
-            <input
-              type="url"
-              name="image"
-              placeholder="https://example.com/parking.jpg"
-              value={formData.image}
-              onChange={handleChange}
-            />
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/jpg,image/webp"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setImageFile(file);
+                    setImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
+
+              {imagePreview && (
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                      border: "1px solid #cbd5e1",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    style={{ padding: "4px 8px", fontSize: "12px" }}
+                    onClick={() => {
+                      setImageFile(null);
+                      setImagePreview("");
+                      setFormData({ ...formData, image: "" });
+                    }}
+                  >
+                    Remove Image
+                  </button>
+                </div>
+              )}
+
+              <input
+                type="url"
+                name="image"
+                placeholder="Or paste image URL (https://...)"
+                value={formData.image}
+                onChange={(e) => {
+                  handleChange(e);
+                  if (!imageFile) setImagePreview(e.target.value);
+                }}
+              />
+            </div>
           </div>
 
           <div className="form-group full">
@@ -714,6 +884,23 @@ function OwnerDashboard() {
                 <p className="address">
                   {parking.address}
                 </p>
+
+                {parking.latitude !== null &&
+                  parking.latitude !== undefined &&
+                  parking.longitude !== null &&
+                  parking.longitude !== undefined && (
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "#2563eb",
+                        margin: "2px 0 8px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      📍 Lat: {Number(parking.latitude).toFixed(4)}, Lng:{" "}
+                      {Number(parking.longitude).toFixed(4)}
+                    </p>
+                  )}
 
                 <div className="parking-info">
 

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="100%" height="100%">
+  <defs>
+    <radialGradient id="npFavGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00D2FF" stop-opacity="0.4"/>
+      <stop offset="70%" stop-color="#0066FF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#001133" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="npFavGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="40%" stop-color="#0080FF"/>
+      <stop offset="100%" stop-color="#0040C8"/>
+    </linearGradient>
+    <linearGradient id="npFavGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#002B80"/>
+      <stop offset="60%" stop-color="#0066FF"/>
+      <stop offset="100%" stop-color="#38B6FF"/>
+    </linearGradient>
+    <filter id="npFavFilter" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <rect width="160" height="160" rx="36" fill="#0A0F1D"/>
+  <circle cx="80" cy="80" r="70" fill="url(#npFavGlow)"/>
+
+  <!-- Speed lines -->
+  <rect x="12" y="54" width="20" height="4" rx="2" fill="#00D2FF" filter="url(#npFavFilter)"/>
+  <rect x="8" y="63" width="24" height="4.5" rx="2.25" fill="#00F0FF"/>
+  <rect x="15" y="72" width="18" height="4" rx="2" fill="#0088FF"/>
+
+  <!-- Left Stem of N -->
+  <path d="M 34 36 L 50 36 L 50 114 L 34 114 Z" fill="url(#npFavGrad1)"/>
+  <!-- N Diagonal -->
+  <path d="M 48 36 L 76 96 L 76 114 L 46 54 Z" fill="url(#npFavGrad2)"/>
+  <!-- P Arch -->
+  <path d="M 68 36 L 116 36 C 138 36, 142 54, 142 76 C 142 98, 134 114, 112 114 L 72 114 L 72 96 L 110 96 C 122 96, 126 88, 126 76 C 126 62, 120 54, 106 54 L 68 54 Z" 
+        fill="url(#npFavGrad1)" filter="url(#npFavFilter)"/>
+
+  <!-- AI Center Car & Sensor -->
+  <ellipse cx="102" cy="50" rx="3" ry="2" fill="#00F0FF"/>
+  <polygon points="102 50, 88 84, 116 84" fill="#00F0FF" opacity="0.25"/>
+  <rect x="92" y="74" width="20" height="7" rx="2" fill="#FFFFFF"/>
+  <ellipse cx="95" cy="77" rx="1.5" ry="1" fill="#00F0FF"/>
+  <ellipse cx="109" cy="77" rx="1.5" ry="1" fill="#00F0FF"/>
+
+  <!-- GPS Pin -->
+  <g transform="translate(68, 98)">
+    <path d="M 6 0 C 3.2 0, 1 2.2, 1 5 C 1 8.5, 6 14, 6 14 C 6 14, 11 8.5, 11 5 C 11 2.2, 8.8 0, 6 0 Z" fill="url(#npFavGrad1)"/>
+    <circle cx="6" cy="4.8" r="2" fill="#FFFFFF"/>
+  </g>
+</svg>

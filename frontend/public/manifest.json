@@ -1,6 +1,6 @@
 {
   "short_name": "NextPark AI",
-  "name": "NextPark AI - Smart Parking",
+  "name": "NextPark AI - Smart Parking System",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0052D4",
+  "background_color": "#0A0F1D"
 }

@@ -17,6 +17,8 @@ const {
   authorize,
 } = require("../middleware/authMiddleware");
 
+const upload = require("../middleware/uploadMiddleware");
+
 // =====================================
 // Public Routes
 // =====================================
@@ -48,6 +50,7 @@ router.post(
   "/",
   protect,
   authorize("owner", "admin"),
+  upload.single("image"),
   addParking
 );
 
@@ -56,6 +59,7 @@ router.put(
   "/:id",
   protect,
   authorize("owner", "admin"),
+  upload.single("image"),
   updateParking
 );
 

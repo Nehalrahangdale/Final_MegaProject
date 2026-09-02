@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../services/authService";
+import NextParkLogo from "../components/NextParkLogo";
 
 function Login() {
   const navigate = useNavigate();
@@ -90,7 +91,10 @@ function Login() {
 
           <div className="card shadow-lg border-0 p-4">
 
-            {/* Header */}
+            {/* Brand Logo Header */}
+            <div className="text-center mb-3">
+              <NextParkLogo variant="compact" height={36} theme="light" animated={true} />
+            </div>
 
             <h2 className="text-center mb-4">
               🔐 Login

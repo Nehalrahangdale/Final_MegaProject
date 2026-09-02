@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 
 import { getParkingById } from "../services/parkingService";
+import { ParkingMap } from "../components";
 
 function ParkingDetails() {
   const { id } = useParams();
@@ -373,6 +374,15 @@ function ParkingDetails() {
               </div>
 
             </div>
+
+            {parking.latitude && parking.longitude && (
+              <div className="card shadow-sm border-0 mt-4">
+                <div className="card-body p-4">
+                  <h4 className="fw-bold mb-3">📍 Location on Map</h4>
+                  <ParkingMap parking={[parking]} height="320px" />
+                </div>
+              </div>
+            )}
 
           </div>
 
