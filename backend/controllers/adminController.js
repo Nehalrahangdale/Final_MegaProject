@@ -32,6 +32,18 @@ const getDashboard = async (req, res) => {
       status: "Completed",
     });
 
+    const cancelledBookings = await Booking.countDocuments({
+      status: "Cancelled",
+    });
+
+    const availableSlotsCount = await Slot.countDocuments({
+      status: "Available",
+    });
+
+    const bookedSlotsCount = await Slot.countDocuments({
+      status: "Booked",
+    });
+
     const revenue = await Payment.aggregate([
       {
         $match: {
@@ -63,6 +75,9 @@ const getDashboard = async (req, res) => {
         totalSlots,
         activeBookings,
         completedBookings,
+        cancelledBookings,
+        availableSlotsCount,
+        bookedSlotsCount,
         totalRevenue,
       },
     });

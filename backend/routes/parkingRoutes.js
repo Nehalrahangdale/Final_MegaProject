@@ -10,6 +10,8 @@ const {
   updateParking,
   deleteParking,
   searchParking,
+  getNearbyParking,
+  getParkingPrediction,
 } = require("../controllers/parkingController");
 
 const {
@@ -29,6 +31,9 @@ router.get("/", getAllParking);
 // Search parking
 router.get("/search", searchParking);
 
+// Get nearby parking by coordinates
+router.get("/nearby", getNearbyParking);
+
 // =====================================
 // Protected Owner/Admin Routes
 // =====================================
@@ -44,6 +49,9 @@ router.get(
 
 // Get parking by ID
 router.get("/:id", getParkingById);
+
+// Get AI Occupancy & Demand Prediction
+router.get("/:id/prediction", getParkingPrediction);
 
 // Add parking
 router.post(

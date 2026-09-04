@@ -156,6 +156,19 @@ const createBooking = async (req, res) => {
         }
 
         // -----------------------------
+        // Socket.IO Real-Time Update
+        // -----------------------------
+        const io = req.app.get("io");
+        if (io) {
+            io.to(`parking-${parkingId}`).emit("slotUpdated", {
+                type: "BOOKED",
+                slotId: slot._id,
+                slot,
+                availableSlots: parking.availableSlots
+            });
+        }
+
+        // -----------------------------
         // Populate Response
         // -----------------------------
         const populatedBooking =
@@ -372,6 +385,17 @@ const cancelBooking = async (req, res) => {
             await parking.save();
         }
 
+        // Socket.IO Real-Time Update
+        const io = req.app.get("io");
+        if (io) {
+            io.to(`parking-${booking.parking}`).emit("slotUpdated", {
+                type: "CANCELLED",
+                slotId: slot ? slot._id : null,
+                slot,
+                availableSlots: parking ? parking.availableSlots : undefined
+            });
+        }
+
         res.status(200).json({
             success: true,
             message: "Booking cancelled successfully"
@@ -405,8 +429,29 @@ const completeBooking = async (req, res) => {
         }
 
         booking.status = "Completed";
-
         await booking.save();
+
+        const slot = await Slot.findById(booking.slot);
+        if (slot && slot.status === "Booked") {
+            slot.status = "Available";
+            await slot.save();
+        }
+
+        const parking = await Parking.findById(booking.parking);
+        if (parking) {
+            parking.availableSlots += 1;
+            await parking.save();
+        }
+
+        const io = req.app.get("io");
+        if (io) {
+            io.to(`parking-${booking.parking}`).emit("slotUpdated", {
+                type: "COMPLETED",
+                slotId: slot ? slot._id : null,
+                slot,
+                availableSlots: parking ? parking.availableSlots : undefined
+            });
+        }
 
         res.status(200).json({
             success: true,

@@ -45,7 +45,12 @@ export const buildQRPayload = (booking) => {
     amount: `INR ${booking.totalAmount || 0}`,
     paymentStatus: booking.paymentStatus || "Pending",
     bookingStatus: booking.status || "Booked",
-    verifyUrl: `http://localhost:5000/api/bookings/verify-qr?id=${booking._id}`,
+    verifyUrl: `${
+      process.env.REACT_APP_BACKEND_URL ||
+      (process.env.REACT_APP_API_URL
+        ? process.env.REACT_APP_API_URL.replace(/\/api\/?$/, "")
+        : "http://localhost:5000")
+    }/api/bookings/verify-qr?id=${booking._id}`,
   };
 
   return JSON.stringify(payload);

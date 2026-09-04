@@ -16,8 +16,35 @@ import {
 } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from "chart.js";
+import { Bar, Doughnut } from "react-chartjs-2";
 import { getAdminDashboard } from "../../services/adminService";
 import "../../styles/admin/AdminDashboard.css";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 function AdminDashboard() {
   const [dashboard, setDashboard] = useState({
@@ -29,6 +56,9 @@ function AdminDashboard() {
     totalRevenue: 0,
     activeBookings: 0,
     completedBookings: 0,
+    cancelledBookings: 0,
+    availableSlotsCount: 0,
+    bookedSlotsCount: 0,
   });
 
   const [loading, setLoading] = useState(true);
@@ -56,6 +86,9 @@ function AdminDashboard() {
         totalRevenue: data.dashboard?.totalRevenue || 0,
         activeBookings: data.dashboard?.activeBookings || 0,
         completedBookings: data.dashboard?.completedBookings || 0,
+        cancelledBookings: data.dashboard?.cancelledBookings || 0,
+        availableSlotsCount: data.dashboard?.availableSlotsCount || 0,
+        bookedSlotsCount: data.dashboard?.bookedSlotsCount || 0,
       });
     } catch (error) {
       console.error("Admin Dashboard Error:", error);
@@ -67,6 +100,146 @@ function AdminDashboard() {
       setLoading(false);
       setRefreshing(false);
     }
+  };
+
+  // =====================================
+  // Chart.js Configurations
+  // =====================================
+  const doughnutOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          boxWidth: 12,
+          padding: 14,
+          font: {
+            size: 12,
+            weight: "600",
+          },
+        },
+      },
+      tooltip: {
+        backgroundColor: "#0f172a",
+        padding: 10,
+        cornerRadius: 8,
+      },
+    },
+  };
+
+  const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: "#0f172a",
+        padding: 10,
+        cornerRadius: 8,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          font: {
+            size: 11,
+            weight: "600",
+          },
+        },
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: "rgba(226, 232, 240, 0.6)",
+        },
+        ticks: {
+          precision: 0,
+        },
+      },
+    },
+  };
+
+  // 1. Users / Owners Distribution
+  const userOwnerChartData = {
+    labels: ["Users (Customers)", "Facility Owners"],
+    datasets: [
+      {
+        label: "Accounts",
+        data: [dashboard.totalUsers, dashboard.totalOwners],
+        backgroundColor: ["#3b82f6", "#8b5cf6"],
+        borderColor: ["#2563eb", "#7c3aed"],
+        borderWidth: 2,
+        hoverOffset: 6,
+      },
+    ],
+  };
+
+  // 2. Parking Facilities & Slot Capacity
+  const parkingSlotsChartData = {
+    labels: ["Facilities", "Total Slots", "Available", "Booked"],
+    datasets: [
+      {
+        label: "Count",
+        data: [
+          dashboard.totalParking,
+          dashboard.totalSlots,
+          dashboard.availableSlotsCount ||
+            Math.max(0, dashboard.totalSlots - dashboard.bookedSlotsCount),
+          dashboard.bookedSlotsCount || dashboard.activeBookings,
+        ],
+        backgroundColor: ["#10b981", "#6366f1", "#06b6d4", "#f59e0b"],
+        borderRadius: 8,
+      },
+    ],
+  };
+
+  // 3. Bookings Status Overview
+  const bookingsChartData = {
+    labels: ["Active Ongoing", "Completed", "Cancelled"],
+    datasets: [
+      {
+        label: "Bookings",
+        data: [
+          dashboard.activeBookings,
+          dashboard.completedBookings,
+          dashboard.cancelledBookings ||
+            Math.max(
+              0,
+              dashboard.totalBookings -
+                dashboard.activeBookings -
+                dashboard.completedBookings
+            ),
+        ],
+        backgroundColor: ["#f59e0b", "#10b981", "#ef4444"],
+        borderColor: ["#d97706", "#059669", "#dc2626"],
+        borderWidth: 2,
+        hoverOffset: 6,
+      },
+    ],
+  };
+
+  // 4. Platform Revenue & Average Ticket Size
+  const revenueChartData = {
+    labels: ["Total Settled (₹)", "Avg / Booking (₹)"],
+    datasets: [
+      {
+        label: "Revenue (₹)",
+        data: [
+          dashboard.totalRevenue,
+          dashboard.totalBookings > 0
+            ? Math.round(dashboard.totalRevenue / dashboard.totalBookings)
+            : 0,
+        ],
+        backgroundColor: ["#059669", "#0d9488"],
+        borderRadius: 8,
+      },
+    ],
   };
 
   if (loading) {
@@ -185,6 +358,97 @@ function AdminDashboard() {
               ₹{Number(dashboard.totalRevenue || 0).toLocaleString("en-IN")}
             </h2>
             <small className="stat-link">View Payments &rarr;</small>
+          </div>
+        </div>
+      </div>
+
+      {/* ================================= */}
+      {/* Visual Analytics Grid (Chart.js)  */}
+      {/* ================================= */}
+      <div className="admin-section-title">
+        <div>
+          <h2>Visual Analytics & Platform Breakdown</h2>
+          <p>Real-time telemetry and resource distribution powered by Chart.js</p>
+        </div>
+        <span className="admin-chartjs-tag">
+          📊 Interactive Chart.js Visuals
+        </span>
+      </div>
+
+      <div className="admin-charts-grid">
+        {/* Chart 1: Users vs Owners */}
+        <div className="admin-chart-card">
+          <div className="admin-chart-header">
+            <div>
+              <h3>👥 Users &amp; Operators</h3>
+              <p>Platform user role distribution</p>
+            </div>
+            <button
+              className="admin-chart-btn"
+              onClick={() => navigate("/admin/users")}
+            >
+              Manage &rarr;
+            </button>
+          </div>
+          <div className="admin-chart-canvas-wrapper doughnut-wrapper">
+            <Doughnut data={userOwnerChartData} options={doughnutOptions} />
+          </div>
+        </div>
+
+        {/* Chart 2: Facilities & Slot Allocation */}
+        <div className="admin-chart-card">
+          <div className="admin-chart-header">
+            <div>
+              <h3>🅿️ Facilities &amp; Slots</h3>
+              <p>Locations, capacities, and live availability</p>
+            </div>
+            <button
+              className="admin-chart-btn"
+              onClick={() => navigate("/admin/parking")}
+            >
+              Facilities &rarr;
+            </button>
+          </div>
+          <div className="admin-chart-canvas-wrapper">
+            <Bar data={parkingSlotsChartData} options={barOptions} />
+          </div>
+        </div>
+
+        {/* Chart 3: Booking Activity Status */}
+        <div className="admin-chart-card">
+          <div className="admin-chart-header">
+            <div>
+              <h3>📅 Booking Status Overview</h3>
+              <p>Active, fulfilled, and cancelled schedules</p>
+            </div>
+            <button
+              className="admin-chart-btn"
+              onClick={() => navigate("/admin/bookings")}
+            >
+              Audits &rarr;
+            </button>
+          </div>
+          <div className="admin-chart-canvas-wrapper doughnut-wrapper">
+            <Doughnut data={bookingsChartData} options={doughnutOptions} />
+          </div>
+        </div>
+
+        {/* Chart 4: Revenue & Economics */}
+        <div className="admin-chart-card">
+          <div className="admin-chart-header">
+            <div>
+              <h3>💰 Revenue &amp; Average Value</h3>
+              <p>Gross settled earnings vs ticket average</p>
+            </div>
+            <button
+              className="admin-chart-btn"
+              onClick={() => navigate("/admin/payments")}
+            >
+              Ledger &rarr;
+            </button>
+          </div>
+          <div className="admin-chart-canvas-wrapper">
+            <Bar data={revenueChartData} options={barOptions} />
           </div>
         </div>
       </div>

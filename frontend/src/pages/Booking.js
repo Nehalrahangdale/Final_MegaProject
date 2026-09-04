@@ -7,12 +7,10 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 
-import {
-  getParkingById,
-  getSlotsByParking,
-} from "../services/parkingService";
-
+import { getParkingById } from "../services/parkingService";
+import { getSlotsByParking } from "../services/slotService";
 import { createBooking } from "../services/bookingService";
+import { socket, joinParkingRoom, leaveParkingRoom } from "../services/socket";
 
 function Booking() {
   const { id } = useParams();
@@ -44,11 +42,13 @@ function Booking() {
 
       const slotData = await getSlotsByParking(id);
 
-      const availableSlots = (slotData.slots || []).filter(
-        (slot) => slot.status === "Available"
+      const allSlots = (slotData.slots || []).sort((a, b) =>
+        String(a.slotNumber).localeCompare(String(b.slotNumber), undefined, {
+          numeric: true,
+        })
       );
 
-      setSlots(availableSlots);
+      setSlots(allSlots);
     } catch (error) {
       console.error("Booking Data Error:", error);
 
@@ -64,6 +64,84 @@ function Booking() {
   useEffect(() => {
     loadBookingData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  // ==========================================
+  // REAL-TIME SLOT UPDATES (Socket.IO)
+  // ==========================================
+  useEffect(() => {
+    if (!id) return;
+
+    joinParkingRoom(id);
+
+    const handleSlotUpdated = (data) => {
+      if (!data) return;
+
+      if (data.type === "BOOKED") {
+        // Automatically switch slot to Booked 🔴
+        setSlots((prev) =>
+          prev.map((s) =>
+            s._id === data.slotId ? { ...s, status: "Booked" } : s
+          )
+        );
+
+        setSelectedSlot((curr) => {
+          if (curr === data.slotId) {
+            alert(
+              `Slot ${data.slot?.slotNumber || ""} was just booked by another user! It is now 🔴 Booked.`
+            );
+            return "";
+          }
+          return curr;
+        });
+      } else if (
+        data.type === "CANCELLED" ||
+        data.type === "COMPLETED"
+      ) {
+        // Automatically switch slot back to Available 🟢
+        setSlots((prev) =>
+          prev.map((s) =>
+            s._id === data.slotId || (data.slot && s._id === data.slot._id)
+              ? { ...s, status: "Available" }
+              : s
+          )
+        );
+      } else if (data.type === "ADDED" && data.slot) {
+        setSlots((prev) => {
+          const exists = prev.some((s) => s._id === data.slot._id);
+          if (exists) return prev;
+          const updated = [...prev, data.slot];
+          return updated.sort((a, b) =>
+            String(a.slotNumber).localeCompare(String(b.slotNumber), undefined, {
+              numeric: true,
+            })
+          );
+        });
+      } else if (data.type === "DELETED") {
+        setSlots((prev) => prev.filter((s) => s._id !== data.slotId));
+        setSelectedSlot((curr) => (curr === data.slotId ? "" : curr));
+      } else if (data.type === "UPDATED" && data.slot) {
+        setSlots((prev) =>
+          prev.map((s) => (s._id === data.slot._id ? data.slot : s))
+        );
+        if (data.slot.status === "Booked") {
+          setSelectedSlot((curr) => (curr === data.slot._id ? "" : curr));
+        }
+      }
+
+      if (typeof data.availableSlots === "number") {
+        setParking((prev) =>
+          prev ? { ...prev, availableSlots: data.availableSlots } : prev
+        );
+      }
+    };
+
+    socket.on("slotUpdated", handleSlotUpdated);
+
+    return () => {
+      leaveParkingRoom(id);
+      socket.off("slotUpdated", handleSlotUpdated);
+    };
   }, [id]);
 
   // ==========================================
@@ -90,6 +168,12 @@ function Booking() {
 
     if (!selectedSlot) {
       alert("Please select a parking slot.");
+      return;
+    }
+
+    const chosenSlot = slots.find((s) => s._id === selectedSlot);
+    if (chosenSlot && chosenSlot.status === "Booked") {
+      alert("This slot is already booked! Please select an available slot.");
       return;
     }
 
@@ -261,7 +345,7 @@ function Booking() {
                 </span>
 
                 <strong>
-                  {slots.length}
+                  {slots.filter((s) => s.status === "Available").length} / {slots.length}
                 </strong>
 
               </div>
@@ -292,12 +376,17 @@ function Booking() {
 
           <div className="card shadow border-0">
 
-            <div className="card-header bg-primary text-white p-4">
+            <div className="card-header bg-primary text-white p-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
 
               <h3 className="mb-0">
                 <FaParking className="me-2" />
                 Reserve Your Parking
               </h3>
+
+              <span className="badge bg-success bg-opacity-75 d-inline-flex align-items-center gap-2 px-3 py-2 fs-6">
+                <span className="spinner-grow spinner-grow-sm text-light" style={{ width: "0.55rem", height: "0.55rem" }} />
+                Live Slot Sync 🔄
+              </span>
 
             </div>
 
@@ -311,65 +400,86 @@ function Booking() {
 
                 <div className="mb-4">
 
-                  <label className="form-label fw-bold">
-                    Select Parking Slot
-                  </label>
+                  <div className="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                    <label className="form-label fw-bold mb-0">
+                      Select Parking Slot
+                    </label>
+
+                    <div className="slot-legend">
+                      <span className="slot-legend-item text-success">
+                        🟢 Available ({slots.filter((s) => s.status === "Available").length})
+                      </span>
+                      <span className="slot-legend-item text-danger">
+                        🔴 Booked ({slots.filter((s) => s.status === "Booked").length})
+                      </span>
+                    </div>
+                  </div>
 
                   {slots.length === 0 ? (
-
-                    <div className="alert alert-danger">
-                      No parking slots are currently
-                      available.
+                    <div className="alert alert-warning">
+                      No parking slots found for this location.
                     </div>
-
                   ) : (
-
                     <div className="row g-3">
+                      {slots.map((slot) => {
+                        const isBooked = slot.status === "Booked";
+                        const isSelected = selectedSlot === slot._id;
 
-                      {slots.map((slot) => (
-
-                        <div
-                          className="col-6 col-md-4"
-                          key={slot._id}
-                        >
-
-                          <button
-                            type="button"
-                            className={
-                              `slot-button w-100 ${
-                                selectedSlot === slot._id
-                                  ? "selected"
-                                  : ""
-                              }`
-                            }
-                            onClick={() =>
-                              setSelectedSlot(
-                                slot._id
-                              )
-                            }
+                        return (
+                          <div
+                            className="col-6 col-md-4"
+                            key={slot._id}
                           >
+                            <button
+                              type="button"
+                              disabled={isBooked}
+                              title={
+                                isBooked
+                                  ? `Slot ${slot.slotNumber} is Booked 🔴`
+                                  : `Click to select Slot ${slot.slotNumber} 🟢`
+                              }
+                              className={
+                                `slot-button w-100 ${
+                                  isBooked
+                                    ? "booked"
+                                    : isSelected
+                                    ? "selected"
+                                    : "available"
+                                }`
+                              }
+                              onClick={() => {
+                                if (!isBooked) {
+                                  setSelectedSlot(slot._id);
+                                }
+                              }}
+                            >
+                              <span>
+                                {isBooked ? "🔴" : "🟢"}
+                              </span>
 
-                            <FaParking />
+                              <span>
+                                Slot {slot.slotNumber}
+                              </span>
 
-                            <span>
-                              Slot {slot.slotNumber}
-                            </span>
+                              {isBooked && (
+                                <small
+                                  className="badge bg-danger ms-1"
+                                  style={{ fontSize: "10px" }}
+                                >
+                                  Booked
+                                </small>
+                              )}
 
-                            {selectedSlot ===
-                              slot._id && (
-                              <FaCheckCircle
-                                className="text-success"
-                              />
-                            )}
-
-                          </button>
-
-                        </div>
-
-                      ))}
-
+                              {isSelected && !isBooked && (
+                                <FaCheckCircle
+                                  className="text-primary ms-1"
+                                />
+                              )}
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
-
                   )}
 
                 </div>

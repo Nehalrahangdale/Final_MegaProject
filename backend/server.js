@@ -3,8 +3,10 @@ const dotenv = require("dotenv");
 const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const http = require("http");
+const { Server } = require("socket.io");
 
-// Load Environment Variables (support both backend/.env and current dir .env)
+// Load Environment Variables
 dotenv.config({ path: path.join(__dirname, ".env") });
 dotenv.config();
 
@@ -15,13 +17,106 @@ connectDB();
 const app = express();
 
 // =======================
+// =======================
+// CORS & Origins Configuration
+// =======================
+
+const defaultOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+];
+
+const configuredOrigins = [...defaultOrigins];
+if (process.env.CLIENT_URL) {
+  process.env.CLIENT_URL.split(",")
+    .map((url) => url.trim().replace(/\/$/, ""))
+    .filter(Boolean)
+    .forEach((url) => {
+      if (!configuredOrigins.includes(url)) {
+        configuredOrigins.push(url);
+      }
+    });
+}
+
+const checkOrigin = (origin, callback) => {
+  // Allow requests with no origin (like mobile apps, curl, postman)
+  if (!origin) return callback(null, true);
+
+  // Exact match with configured origins
+  if (configuredOrigins.includes(origin)) {
+    return callback(null, true);
+  }
+
+  // Allow all Vercel deployment preview and production domains
+  if (/^https:\/\/.*\.vercel\.app$/.test(origin)) {
+    return callback(null, true);
+  }
+
+  // In non-production, be permissive for local network testing
+  if (process.env.NODE_ENV !== "production") {
+    return callback(null, true);
+  }
+
+  return callback(null, false);
+};
+
+// =======================
+// HTTP SERVER
+// =======================
+
+const server = http.createServer(app);
+
+// =======================
+// Socket.IO
+// =======================
+
+const io = new Server(server, {
+  cors: {
+    origin: checkOrigin,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// Make io available inside controllers
+app.set("io", io);
+
+// Socket connection
+io.on("connection", (socket) => {
+  console.log("🔌 User connected:", socket.id);
+
+  socket.on("joinParking", (parkingId) => {
+    socket.join(`parking-${parkingId}`);
+
+    console.log(
+      `📍 Socket ${socket.id} joined parking-${parkingId}`
+    );
+  });
+
+  socket.on("leaveParking", (parkingId) => {
+    socket.leave(`parking-${parkingId}`);
+
+    console.log(
+      `🚪 Socket ${socket.id} left parking-${parkingId}`
+    );
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
+});
+
+// =======================
 // Middleware
 // =======================
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: checkOrigin,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   })
 );
 
@@ -83,7 +178,10 @@ app.use((req, res) => {
 // =======================
 
 app.use((err, req, res, next) => {
-  console.error("Global error handler:", err.stack || err.message);
+  console.error(
+    "Global error handler:",
+    err.stack || err.message
+  );
 
   res.status(500).json({
     success: false,
@@ -98,6 +196,10 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+server.listen(PORT, () => {
+  console.log(
+    `✅ Server running on http://localhost:${PORT}`
+  );
+
+  console.log("🔌 Socket.IO is running");
 });

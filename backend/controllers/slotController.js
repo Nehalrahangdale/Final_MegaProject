@@ -32,6 +32,18 @@ const addSlot = async (req, res) => {
             vehicleType: vehicleType || "Car"
         });
 
+        // ===============================
+        // Socket.IO Real-Time Update
+        // ===============================
+        const io = req.app.get("io");
+
+        if (io) {
+            io.to(`parking-${parking}`).emit("slotUpdated", {
+                type: "ADDED",
+                slot
+            });
+        }
+
         res.status(201).json({
             success: true,
             message: "Slot Added Successfully",
@@ -157,6 +169,18 @@ const updateSlot = async (req, res) => {
             }
         );
 
+        // ===============================
+        // Socket.IO Real-Time Update
+        // ===============================
+        const io = req.app.get("io");
+
+        if (io) {
+            io.to(`parking-${slot.parking}`).emit("slotUpdated", {
+                type: "UPDATED",
+                slot: updatedSlot
+            });
+        }
+
         res.status(200).json({
             success: true,
             message: "Slot Updated Successfully",
@@ -188,7 +212,21 @@ const deleteSlot = async (req, res) => {
             });
         }
 
+        const parkingId = slot.parking;
+
         await slot.deleteOne();
+
+        // ===============================
+        // Socket.IO Real-Time Update
+        // ===============================
+        const io = req.app.get("io");
+
+        if (io) {
+            io.to(`parking-${parkingId}`).emit("slotUpdated", {
+                type: "DELETED",
+                slotId: slot._id
+            });
+        }
 
         res.status(200).json({
             success: true,

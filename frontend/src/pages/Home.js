@@ -8,6 +8,7 @@ import {
   FaChevronDown,
   FaChevronUp,
   FaStar,
+  FaLocationArrow,
 } from "react-icons/fa";
 import { getAllParking } from "../services/parkingService";
 import "../styles/Home.css";
@@ -20,6 +21,37 @@ function Home() {
   const [searchVehicle, setSearchVehicle] = useState("Car");
   const [searchDate, setSearchDate] = useState("");
   const [searchTime, setSearchTime] = useState("");
+  const [detectingLocation, setDetectingLocation] = useState(false);
+
+  // Near Me (Current GPS Location) Search
+  const handleNearMe = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    setDetectingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setDetectingLocation(false);
+        const lat = position.coords.latitude.toFixed(6);
+        const lng = position.coords.longitude.toFixed(6);
+        const params = new URLSearchParams();
+        params.append("lat", lat);
+        params.append("lng", lng);
+        params.append("nearMe", "true");
+        if (searchVehicle && searchVehicle !== "All") {
+          params.append("vehicleType", searchVehicle);
+        }
+        navigate(`/parkings?${params.toString()}`);
+      },
+      (err) => {
+        setDetectingLocation(false);
+        console.error("Geolocation error:", err);
+        alert("Could not retrieve your GPS location. Please type your city manually or grant location permission.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   // Featured parking state
   const [featuredParkings, setFeaturedParkings] = useState([]);
@@ -157,30 +189,42 @@ function Home() {
 
             <form onSubmit={handleSearch}>
               <div className="row g-3">
-                <div className="col-md-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter City or Area (e.g. Nagpur)"
-                    value={searchCity}
-                    onChange={(e) => setSearchCity(e.target.value)}
-                  />
+                <div className="col-lg-4 col-md-6">
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter City or Area (e.g. Nagpur)"
+                      value={searchCity}
+                      onChange={(e) => setSearchCity(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary d-flex align-items-center gap-1"
+                      onClick={handleNearMe}
+                      disabled={detectingLocation}
+                      title="Find parking near your current GPS location"
+                    >
+                      <FaLocationArrow />
+                      <span>{detectingLocation ? "Detecting..." : "Near Me"}</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-lg-2 col-md-6">
                   <select
                     className="form-select"
                     value={searchVehicle}
                     onChange={(e) => setSearchVehicle(e.target.value)}
                   >
-                    <option value="All">All Vehicle Types</option>
+                    <option value="All">All Vehicles</option>
                     <option value="Car">Car</option>
                     <option value="Bike">Bike</option>
                     <option value="Truck">Truck</option>
                   </select>
                 </div>
 
-                <div className="col-md-2">
+                <div className="col-lg-2 col-md-4">
                   <input
                     type="date"
                     className="form-control"
@@ -190,7 +234,7 @@ function Home() {
                   />
                 </div>
 
-                <div className="col-md-2">
+                <div className="col-lg-2 col-md-4">
                   <input
                     type="time"
                     className="form-control"
@@ -199,7 +243,7 @@ function Home() {
                   />
                 </div>
 
-                <div className="col-md-2 d-grid">
+                <div className="col-lg-2 col-md-4 d-grid">
                   <button type="submit" className="btn btn-primary d-flex align-items-center justify-content-center">
                     <FaSearch className="me-2" />
                     Search

@@ -17,9 +17,12 @@ import {
   getMyParking,
   updateParking,
   deleteParking,
+  reverseGeocode,
+  getGoogleMapsDirectionsUrl,
 } from "../services/parkingService";
 
 import { getOwnerDashboard } from "../services/ownerService";
+import { ParkingMap } from "../components";
 
 import "../styles/OwnerDashboard.css";
 
@@ -60,8 +63,10 @@ function OwnerDashboard() {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [detectingLocation, setDetectingLocation] = useState(false);
+  const [geocodingLocation, setGeocodingLocation] = useState(false);
+  const [showMapPicker, setShowMapPicker] = useState(false);
 
-  // Auto-detect current coordinates for parking location
+  // Auto-detect current coordinates for parking location and reverse-geocode address
   const handleGetCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
@@ -70,21 +75,72 @@ function OwnerDashboard() {
 
     setDetectingLocation(true);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
+        const lat = Number(position.coords.latitude.toFixed(6));
+        const lng = Number(position.coords.longitude.toFixed(6));
+
         setFormData((prev) => ({
           ...prev,
-          latitude: position.coords.latitude.toFixed(6),
-          longitude: position.coords.longitude.toFixed(6),
+          latitude: lat,
+          longitude: lng,
         }));
         setDetectingLocation(false);
+
+        // Auto reverse-geocode to populate address / city / state
+        try {
+          setGeocodingLocation(true);
+          const geo = await reverseGeocode(lat, lng);
+          if (geo) {
+            setFormData((prev) => ({
+              ...prev,
+              latitude: lat,
+              longitude: lng,
+              city: prev.city || geo.city,
+              state: prev.state || geo.state,
+              address: prev.address || geo.address,
+            }));
+          }
+        } catch (e) {
+          console.warn("Reverse geocode failed:", e);
+        } finally {
+          setGeocodingLocation(false);
+        }
       },
       (error) => {
         console.error("Geolocation error:", error);
-        alert("Could not fetch your location. Please enter coordinates manually.");
+        alert("Could not fetch your location. Please enter coordinates or pick on map.");
         setDetectingLocation(false);
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
+  };
+
+  // Map click/drag picker handler
+  const handleMapPickerSelect = async (lat, lng) => {
+    setFormData((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: lng,
+    }));
+
+    try {
+      setGeocodingLocation(true);
+      const geo = await reverseGeocode(lat, lng);
+      if (geo) {
+        setFormData((prev) => ({
+          ...prev,
+          latitude: lat,
+          longitude: lng,
+          city: prev.city || geo.city,
+          state: prev.state || geo.state,
+          address: prev.address || geo.address,
+        }));
+      }
+    } catch (e) {
+      console.warn("Reverse geocode failed:", e);
+    } finally {
+      setGeocodingLocation(false);
+    }
   };
 
   // =====================================
@@ -668,22 +724,44 @@ function OwnerDashboard() {
             <div className="form-group">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                 <label style={{ margin: 0 }}>Latitude</label>
-                <button
-                  type="button"
-                  onClick={handleGetCurrentLocation}
-                  disabled={detectingLocation}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#2563eb",
-                    cursor: "pointer",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    padding: 0,
-                  }}
-                >
-                  {detectingLocation ? "Detecting..." : "📍 Detect Location"}
-                </button>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    type="button"
+                    onClick={handleGetCurrentLocation}
+                    disabled={detectingLocation || geocodingLocation}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#2563eb",
+                      cursor: "pointer",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      padding: 0,
+                    }}
+                  >
+                    {detectingLocation
+                      ? "GPS..."
+                      : geocodingLocation
+                      ? "Resolving..."
+                      : "📍 Auto GPS"}
+                  </button>
+                  <span style={{ color: "#cbd5e1" }}>|</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowMapPicker(!showMapPicker)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#059669",
+                      cursor: "pointer",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      padding: 0,
+                    }}
+                  >
+                    {showMapPicker ? "Close Map" : "🗺️ Pick on Map"}
+                  </button>
+                </div>
               </div>
 
               <input
@@ -710,6 +788,61 @@ function OwnerDashboard() {
             </div>
 
           </div>
+
+          {/* Interactive Map Picker */}
+          {showMapPicker && (
+            <div
+              className="form-group full"
+              style={{
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                borderRadius: "14px",
+                padding: "16px",
+                marginBottom: "20px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "12px",
+                }}
+              >
+                <div>
+                  <h6 style={{ margin: 0, fontWeight: 700, color: "#1e293b" }}>
+                    🗺️ Select Parking Location on Map
+                  </h6>
+                  <small style={{ color: "#64748b" }}>
+                    Click anywhere on the map or drag the red pin to set the exact coordinates.
+                  </small>
+                </div>
+
+                {formData.latitude && formData.longitude && (
+                  <span
+                    className="badge bg-light text-primary border"
+                    style={{ fontSize: "12px", padding: "6px 12px" }}
+                  >
+                    📍 Lat: {Number(formData.latitude).toFixed(4)}, Lng: {Number(formData.longitude).toFixed(4)}
+                  </span>
+                )}
+              </div>
+
+              <ParkingMap
+                isPicker={true}
+                pickerLocation={
+                  formData.latitude && formData.longitude
+                    ? {
+                        lat: Number(formData.latitude),
+                        lng: Number(formData.longitude),
+                      }
+                    : { lat: 21.1458, lng: 79.0882 }
+                }
+                onLocationSelect={handleMapPickerSelect}
+                height="320px"
+              />
+            </div>
+          )}
 
           <div className="form-group full">
             <label>Parking Image</label>
@@ -889,16 +1022,25 @@ function OwnerDashboard() {
                   parking.latitude !== undefined &&
                   parking.longitude !== null &&
                   parking.longitude !== undefined && (
-                    <p
-                      style={{
-                        fontSize: "12px",
-                        color: "#2563eb",
-                        margin: "2px 0 8px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      📍 Lat: {Number(parking.latitude).toFixed(4)}, Lng:{" "}
-                      {Number(parking.longitude).toFixed(4)}
+                    <p style={{ margin: "2px 0 8px" }}>
+                      <a
+                        href={getGoogleMapsDirectionsUrl(
+                          parking.latitude,
+                          parking.longitude
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          fontSize: "12px",
+                          color: "#2563eb",
+                          fontWeight: "600",
+                          textDecoration: "none",
+                        }}
+                        title="View Location on Google Maps"
+                      >
+                        📍 Lat: {Number(parking.latitude).toFixed(4)}, Lng:{" "}
+                        {Number(parking.longitude).toFixed(4)} ↗
+                      </a>
                     </p>
                   )}
 

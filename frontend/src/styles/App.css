@@ -519,7 +519,7 @@ margin-bottom:20px;
   border: 2px solid #dee2e6;
   background: white;
   border-radius: 12px;
-  padding: 15px 10px;
+  padding: 14px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -529,15 +529,53 @@ margin-bottom:20px;
   transition: all 0.25s ease;
 }
 
-.slot-button:hover {
-  border-color: #0d6efd;
+.slot-button.available {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.slot-button.available:hover {
+  border-color: #22c55e;
+  background: #dcfce7;
   transform: translateY(-2px);
 }
 
+.slot-button.booked {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.slot-button.booked:hover {
+  transform: none;
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
 .slot-button.selected {
-  border-color: #198754;
-  background: #eaf8ef;
-  color: #198754;
+  border-color: #0d6efd;
+  background: #eff6ff;
+  color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+.slot-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.slot-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .booking-total {
