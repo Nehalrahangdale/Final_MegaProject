@@ -107,7 +107,16 @@ function App() {
             <Route
               path="/qr-ticket"
               element={
-                <PrivateRoute allowedRoles={["user"]}>
+                <PrivateRoute allowedRoles={["user", "admin", "owner"]}>
+                  <QRCodePage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/qrcode"
+              element={
+                <PrivateRoute allowedRoles={["user", "admin", "owner"]}>
                   <QRCodePage />
                 </PrivateRoute>
               }

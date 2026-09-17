@@ -476,6 +476,11 @@ function ParkingList() {
                       }
                       alt={item.name}
                       className="parking-image"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src =
+                          "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800";
+                      }}
                     />
                     <span className="parking-price">
                       ₹{item.pricePerHour}/hr

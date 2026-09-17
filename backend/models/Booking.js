@@ -52,6 +52,16 @@ const bookingSchema = new mongoose.Schema(
       trim: true,
     },
 
+    startDateTime: {
+      type: Date,
+      index: true,
+    },
+
+    endDateTime: {
+      type: Date,
+      index: true,
+    },
+
     // =========================
     // Duration
     // =========================

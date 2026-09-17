@@ -1,5 +1,5 @@
 /* =============================================
-   QR TICKET PAGE — Premium Dark Glassmorphism
+   QR TICKET PAGE — Hot Pink Cyberpunk Luxury Theme
    ============================================= */
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap");
@@ -7,7 +7,7 @@
 /* ---- Page Wrapper ---- */
 .qr-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a1a 0%, #0d1b2e 40%, #0a1628 70%, #071220 100%);
+  background: radial-gradient(circle at 50% 12%, #ff1493 0%, #d81b7a 22%, #9c1256 48%, #54062f 72%, #220213 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,15 +17,15 @@
   overflow: hidden;
 }
 
-/* ---- Animated Background Orbs ---- */
+/* ---- Animated Hot Pink Ambient Orbs ---- */
 .qr-page::before {
   content: "";
   position: fixed;
-  top: -30%;
-  left: -20%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(13, 110, 253, 0.18) 0%, transparent 70%);
+  top: -20%;
+  left: -15%;
+  width: 650px;
+  height: 650px;
+  background: radial-gradient(circle, rgba(255, 20, 147, 0.45) 0%, rgba(255, 105, 180, 0.2) 45%, transparent 70%);
   border-radius: 50%;
   animation: floatOrb 8s ease-in-out infinite alternate;
   pointer-events: none;
@@ -34,11 +34,11 @@
 .qr-page::after {
   content: "";
   position: fixed;
-  bottom: -25%;
+  bottom: -20%;
   right: -15%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(25, 135, 84, 0.15) 0%, transparent 70%);
+  width: 580px;
+  height: 580px;
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.45) 0%, rgba(255, 20, 147, 0.2) 45%, transparent 70%);
   border-radius: 50%;
   animation: floatOrb 10s ease-in-out infinite alternate-reverse;
   pointer-events: none;
@@ -49,14 +49,14 @@
   to   { transform: translate(30px, 20px) scale(1.1); }
 }
 
-/* ---- Grid Background ---- */
+/* ---- Grid Background with Hot Pink Accents ---- */
 .qr-grid-bg {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(13, 110, 253, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(13, 110, 253, 0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
+    linear-gradient(rgba(255, 105, 180, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 105, 180, 0.08) 1px, transparent 1px);
+  background-size: 50px 50px;
   pointer-events: none;
 }
 
@@ -67,7 +67,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a1a, #0d1b2e);
+  background: radial-gradient(circle at 50% 30%, #ff1493 0%, #700a40 50%, #200212 100%);
   color: white;
   gap: 20px;
 }
@@ -75,10 +75,11 @@
 .qr-loading-spinner {
   width: 60px;
   height: 60px;
-  border: 3px solid rgba(13, 110, 253, 0.2);
-  border-top-color: #0d6efd;
+  border: 3px solid rgba(255, 20, 147, 0.25);
+  border-top-color: #ff1493;
   border-radius: 50%;
   animation: spin 0.9s linear infinite;
+  box-shadow: 0 0 20px rgba(255, 20, 147, 0.6);
 }
 
 @keyframes spin {
@@ -86,7 +87,7 @@
 }
 
 .qr-loading p {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.85);
   font-family: "Poppins", sans-serif;
   font-size: 15px;
   letter-spacing: 1px;
@@ -99,7 +100,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a1a, #0d1b2e);
+  background: radial-gradient(circle at 50% 30%, #ff1493 0%, #700a40 50%, #200212 100%);
   color: white;
   gap: 16px;
   text-align: center;
@@ -123,13 +124,13 @@
 }
 
 .qr-error p {
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
   max-width: 320px;
 }
 
 .qr-back-btn {
-  background: linear-gradient(135deg, #0d6efd, #0a58ca);
+  background: linear-gradient(135deg, #ff1493, #e11d48);
   color: white;
   border: none;
   padding: 12px 28px;
@@ -139,7 +140,7 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+  box-shadow: 0 6px 20px rgba(255, 20, 147, 0.45);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -148,14 +149,14 @@
 
 .qr-back-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(13, 110, 253, 0.5);
+  box-shadow: 0 10px 28px rgba(255, 20, 147, 0.65);
   color: white;
 }
 
 /* ---- Header ---- */
 .qr-header {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
   position: relative;
   z-index: 10;
 }
@@ -164,58 +165,62 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(13, 110, 253, 0.12);
-  border: 1px solid rgba(13, 110, 253, 0.3);
-  color: #60a5fa;
-  padding: 6px 16px;
+  background: rgba(255, 20, 147, 0.25);
+  border: 1px solid rgba(255, 105, 180, 0.45);
+  color: #ffb3d9;
+  padding: 6px 18px;
   border-radius: 50px;
   font-family: "Poppins", sans-serif;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   backdrop-filter: blur(10px);
+  box-shadow: 0 0 16px rgba(255, 20, 147, 0.3);
 }
 
 .qr-header h1 {
   font-family: "Poppins", sans-serif;
   font-size: 36px;
   font-weight: 800;
-  color: white;
+  color: #ffffff;
   line-height: 1.2;
   margin-bottom: 8px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
 }
 
 .qr-header h1 span {
-  background: linear-gradient(135deg, #60a5fa, #34d399);
+  background: linear-gradient(135deg, #ffffff 0%, #ff80bf 50%, #ff1493 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 0 20px rgba(255, 20, 147, 0.5);
 }
 
 .qr-header p {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.75);
   font-family: "Poppins", sans-serif;
   font-size: 14px;
+  font-weight: 400;
 }
 
-/* ---- Main Ticket Card ---- */
+/* ---- Main Ticket Card (Hot Pink Glassmorphism) ---- */
 .qr-ticket {
   width: 100%;
-  max-width: 560px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: 540px;
+  background: rgba(45, 4, 25, 0.72);
+  border: 1.5px solid rgba(255, 105, 180, 0.28);
   border-radius: 28px;
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(35px);
+  -webkit-backdrop-filter: blur(35px);
   overflow: hidden;
   position: relative;
   z-index: 10;
   box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 30px 80px rgba(255, 20, 147, 0.25),
+    0 12px 40px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 182, 193, 0.35);
   animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -232,17 +237,18 @@
 
 /* ---- Ticket Header Strip ---- */
 .ticket-header-strip {
-  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 50%, #198754 100%);
-  padding: 28px 32px;
+  background: linear-gradient(135deg, #ff1493 0%, #f43f5e 50%, #e11d48 100%);
+  padding: 26px 30px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(255, 20, 147, 0.35);
 }
 
 .ticket-header-strip::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 .ticket-header-top {
@@ -255,24 +261,25 @@
 .ticket-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .ticket-brand-icon {
-  width: 42px;
-  height: 42px;
-  background: rgba(255, 255, 255, 0.2);
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 22px;
   backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .ticket-brand-text h2 {
   font-family: "Poppins", sans-serif;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   color: white;
   margin: 0;
@@ -282,39 +289,40 @@
 .ticket-brand-text p {
   font-family: "Poppins", sans-serif;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
   letter-spacing: 1px;
+  font-weight: 500;
 }
 
 .ticket-status-chip {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   color: white;
   padding: 6px 14px;
   border-radius: 50px;
   font-family: "Poppins", sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 1px;
   backdrop-filter: blur(8px);
   text-transform: uppercase;
 }
 
 .ticket-status-chip.paid {
-  background: rgba(25, 135, 84, 0.4);
-  border-color: rgba(25, 135, 84, 0.6);
-  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.35);
+  border-color: rgba(52, 211, 153, 0.6);
+  color: #a7f3d0;
 }
 
 .ticket-parking-name {
-  margin-top: 20px;
+  margin-top: 18px;
   position: relative;
 }
 
 .ticket-parking-name h3 {
   font-family: "Poppins", sans-serif;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 700;
   color: white;
   margin: 0 0 4px 0;
@@ -323,11 +331,11 @@
 .ticket-parking-name p {
   font-family: "Poppins", sans-serif;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 /* ---- Dashed Divider (tear line) ---- */
@@ -341,9 +349,10 @@
 .ticket-tear-circle {
   width: 28px;
   height: 28px;
-  background: linear-gradient(135deg, #0a0a1a, #0d1b2e);
+  background: #35051d;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .ticket-tear-circle.left {
@@ -356,58 +365,201 @@
 
 .ticket-tear-line {
   flex: 1;
-  border-top: 2px dashed rgba(255, 255, 255, 0.1);
+  border-top: 2px dashed rgba(255, 105, 180, 0.3);
   margin: 0 4px;
 }
 
 /* ---- QR Section ---- */
 .ticket-qr-section {
-  padding: 32px;
+  padding: 28px 30px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 18px;
 }
 
 .qr-frame {
   position: relative;
   padding: 16px;
-  background: white;
+  background: #ffffff;
   border-radius: 20px;
   box-shadow:
-    0 0 0 1px rgba(13, 110, 253, 0.2),
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 60px rgba(13, 110, 253, 0.08);
+    0 0 0 2px rgba(255, 20, 147, 0.3),
+    0 12px 40px rgba(255, 20, 147, 0.35),
+    0 0 50px rgba(255, 20, 147, 0.2);
   animation: qrGlow 3s ease-in-out infinite alternate;
 }
 
 @keyframes qrGlow {
-  from { box-shadow: 0 0 0 1px rgba(13,110,253,0.2), 0 8px 32px rgba(0,0,0,0.4), 0 0 30px rgba(13,110,253,0.06); }
-  to   { box-shadow: 0 0 0 1px rgba(13,110,253,0.4), 0 8px 40px rgba(0,0,0,0.5), 0 0 60px rgba(13,110,253,0.18); }
+  from {
+    box-shadow: 0 0 0 2px rgba(255, 20, 147, 0.3), 0 8px 30px rgba(255, 20, 147, 0.25), 0 0 30px rgba(255, 20, 147, 0.15);
+  }
+  to {
+    box-shadow: 0 0 0 2px rgba(255, 20, 147, 0.6), 0 12px 45px rgba(255, 20, 147, 0.5), 0 0 60px rgba(255, 20, 147, 0.35);
+  }
+}
+
+/* Animated Neon Hot Pink Laser Scan Line */
+.qr-frame::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #ff1493, #ff69b4, #ff1493, transparent);
+  box-shadow: 0 0 10px #ff1493, 0 0 20px #ff69b4;
+  animation: scanLaser 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scanLaser {
+  0%, 100% {
+    top: 16px;
+    opacity: 0.3;
+  }
+  50% {
+    top: calc(100% - 18px);
+    opacity: 1;
+  }
 }
 
 .qr-corner {
   position: absolute;
-  width: 18px;
-  height: 18px;
-  border-color: #0d6efd;
+  width: 20px;
+  height: 20px;
+  border-color: #ff1493;
   border-style: solid;
   border-width: 0;
 }
 
-.qr-corner.tl { top: 6px; left: 6px;  border-top-width: 3px; border-left-width: 3px;  border-radius: 4px 0 0 0; }
-.qr-corner.tr { top: 6px; right: 6px; border-top-width: 3px; border-right-width: 3px; border-radius: 0 4px 0 0; }
-.qr-corner.bl { bottom: 6px; left: 6px;  border-bottom-width: 3px; border-left-width: 3px;  border-radius: 0 0 0 4px; }
-.qr-corner.br { bottom: 6px; right: 6px; border-bottom-width: 3px; border-right-width: 3px; border-radius: 0 0 4px 0; }
+.qr-corner.tl { top: 6px; left: 6px;   border-top-width: 3.5px; border-left-width: 3.5px;   border-radius: 6px 0 0 0; }
+.qr-corner.tr { top: 6px; right: 6px;  border-top-width: 3.5px; border-right-width: 3.5px;  border-radius: 0 6px 0 0; }
+.qr-corner.bl { bottom: 6px; left: 6px;   border-bottom-width: 3.5px; border-left-width: 3.5px;   border-radius: 0 0 0 6px; }
+.qr-corner.br { bottom: 6px; right: 6px;  border-bottom-width: 3.5px; border-right-width: 3.5px;  border-radius: 0 0 6px 0; }
 
 .qr-scan-label {
   font-family: "Poppins", sans-serif;
   font-size: 12px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  color: #ffb3d9;
   letter-spacing: 2px;
   text-transform: uppercase;
   text-align: center;
+  margin: 0;
+}
+
+/* ---- HUMAN-READABLE GATE CODE (More Perfect / Human Passcode) ---- */
+.human-code-card {
+  margin: 0 30px 22px;
+  padding: 14px 18px;
+  background: rgba(255, 20, 147, 0.12);
+  border: 1.5px solid rgba(255, 105, 180, 0.35);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 18px rgba(255, 20, 147, 0.15);
+}
+
+.human-code-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.human-code-tag {
+  font-family: "Poppins", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #ff80bf;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-transform: uppercase;
+}
+
+.human-code-dot {
+  width: 8px;
+  height: 8px;
+  background: #ff1493;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ff1493;
+  animation: pulseDot 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+.human-code-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.human-code-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.human-code-pill {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 105, 180, 0.3);
+  border-radius: 10px;
+  padding: 5px 14px;
+  gap: 10px;
+  flex: 1;
+}
+
+.human-code-prefix {
+  font-family: "Poppins", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: #ff69b4;
+  letter-spacing: 1px;
+}
+
+.human-code-digits {
+  font-family: "Space Mono", monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(255, 20, 147, 0.7);
+}
+
+.human-code-copy-btn {
+  background: linear-gradient(135deg, #ff1493 0%, #e11d48 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 4px 14px rgba(255, 20, 147, 0.4);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.human-code-copy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 20, 147, 0.6);
+  background: linear-gradient(135deg, #ff2d87 0%, #f43f5e 100%);
+}
+
+.human-code-copy-btn.copied {
+  background: #10b981;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
 }
 
 /* ---- Booking Details Grid ---- */
@@ -416,21 +568,22 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   width: 100%;
-  padding: 0 32px 24px;
+  padding: 0 30px 22px;
 }
 
 .ticket-detail-item {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 105, 180, 0.16);
   border-radius: 14px;
-  padding: 14px 16px;
+  padding: 13px 15px;
   transition: all 0.25s ease;
 }
 
 .ticket-detail-item:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(13, 110, 253, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 20, 147, 0.45);
   transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(255, 20, 147, 0.15);
 }
 
 .ticket-detail-item .detail-label {
@@ -439,43 +592,47 @@
   gap: 6px;
   font-family: "Poppins", sans-serif;
   font-size: 10px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  color: #ffb3d9;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .ticket-detail-item .detail-label svg,
 .ticket-detail-item .detail-label .detail-icon {
   font-size: 12px;
-  opacity: 0.7;
+  opacity: 0.85;
+  color: #ff69b4;
 }
 
 .ticket-detail-item .detail-value {
   font-family: "Poppins", sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffff;
   line-height: 1.3;
 }
 
 .ticket-detail-item.highlight {
-  background: rgba(25, 135, 84, 0.1);
-  border-color: rgba(25, 135, 84, 0.25);
+  background: rgba(255, 20, 147, 0.18);
+  border-color: rgba(255, 20, 147, 0.45);
+  box-shadow: 0 2px 10px rgba(255, 20, 147, 0.2);
 }
 
 .ticket-detail-item.highlight .detail-value {
-  color: #34d399;
+  color: #ff80bf;
   font-size: 18px;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
 }
 
 /* ---- Booking ID Bar ---- */
 .ticket-id-bar {
-  margin: 0 32px;
-  padding: 14px 20px;
-  background: rgba(13, 110, 253, 0.07);
-  border: 1px solid rgba(13, 110, 253, 0.2);
+  margin: 0 30px;
+  padding: 13px 18px;
+  background: rgba(255, 20, 147, 0.1);
+  border: 1px solid rgba(255, 105, 180, 0.25);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -486,8 +643,8 @@
 .ticket-id-label {
   font-family: "Poppins", sans-serif;
   font-size: 11px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  color: #ffb3d9;
   letter-spacing: 1.5px;
   text-transform: uppercase;
 }
@@ -496,45 +653,46 @@
   font-family: "Space Mono", monospace;
   font-size: 13px;
   font-weight: 700;
-  color: #60a5fa;
+  color: #ffffff;
   letter-spacing: 1px;
   word-break: break-all;
   text-align: right;
+  text-shadow: 0 0 8px rgba(255, 20, 147, 0.5);
 }
 
 /* ---- Action Buttons ---- */
 .ticket-actions {
   display: flex;
   gap: 12px;
-  padding: 24px 32px 32px;
+  padding: 22px 30px 28px;
   flex-wrap: wrap;
 }
 
 .btn-download {
   flex: 1;
   min-width: 140px;
-  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+  background: linear-gradient(135deg, #ff1493 0%, #db2777 50%, #be185d 100%);
   color: white;
   border: none;
   padding: 14px 20px;
   border-radius: 14px;
   font-family: "Poppins", sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+  box-shadow: 0 8px 24px rgba(255, 20, 147, 0.45);
   letter-spacing: 0.3px;
 }
 
 .btn-download:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(13, 110, 253, 0.5);
-  background: linear-gradient(135deg, #1a7fff, #0d6efd);
+  box-shadow: 0 12px 30px rgba(255, 20, 147, 0.65);
+  background: linear-gradient(135deg, #ff2d87 0%, #e11d48 100%);
 }
 
 .btn-download:active {
@@ -544,9 +702,9 @@
 .btn-print {
   flex: 1;
   min-width: 140px;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 105, 180, 0.25);
   padding: 14px 20px;
   border-radius: 14px;
   font-family: "Poppins", sans-serif;
@@ -563,18 +721,19 @@
 }
 
 .btn-print:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 20, 147, 0.2);
+  border-color: rgba(255, 105, 180, 0.5);
   color: white;
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 20, 147, 0.25);
 }
 
 .btn-back-dash {
   width: 100%;
   background: transparent;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.5);
   border: none;
-  padding: 0 32px 8px;
+  padding: 0 30px 8px;
   font-family: "Poppins", sans-serif;
   font-size: 13px;
   font-weight: 500;
@@ -588,22 +747,22 @@
 }
 
 .btn-back-dash:hover {
-  color: rgba(255, 255, 255, 0.7);
+  color: #ff80bf;
 }
 
 /* ---- Footer note ---- */
 .qr-footer-note {
-  margin-top: 28px;
+  margin-top: 24px;
   text-align: center;
   font-family: "Poppins", sans-serif;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.4);
   position: relative;
   z-index: 10;
 }
 
 .qr-footer-note a {
-  color: rgba(96, 165, 250, 0.5);
+  color: #ff80bf;
   text-decoration: none;
 }
 
@@ -618,7 +777,8 @@
   .qr-header,
   .ticket-actions,
   .btn-back-dash,
-  .qr-footer-note {
+  .qr-footer-note,
+  .human-code-copy-btn {
     display: none !important;
   }
 
@@ -628,6 +788,10 @@
     border: 1px solid #ddd !important;
     border-radius: 16px !important;
     max-width: 100% !important;
+  }
+
+  .ticket-header-strip {
+    background: #e11d48 !important;
   }
 
   .ticket-detail-item {
@@ -644,23 +808,34 @@
   }
 
   .ticket-id-bar {
-    background: #f0f4ff !important;
-    border-color: #c0cfff !important;
+    background: #fff1f2 !important;
+    border-color: #fecdd3 !important;
   }
 
   .ticket-id-value {
-    color: #0d6efd !important;
+    color: #e11d48 !important;
+  }
+
+  .human-code-card {
+    background: #fff1f2 !important;
+    border-color: #fecdd3 !important;
+  }
+
+  .human-code-digits {
+    color: #e11d48 !important;
+    text-shadow: none !important;
   }
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 600px) {
   .qr-header h1 { font-size: 26px; }
-  .ticket-header-strip { padding: 22px 22px; }
-  .ticket-qr-section { padding: 24px 22px; }
-  .ticket-details-grid { padding: 0 22px 18px; gap: 10px; }
-  .ticket-id-bar { margin: 0 22px; }
-  .ticket-actions { padding: 18px 22px 24px; }
+  .ticket-header-strip { padding: 22px 20px; }
+  .ticket-qr-section { padding: 22px 20px 16px; }
+  .human-code-card { margin: 0 20px 18px; padding: 12px 14px; }
+  .ticket-details-grid { padding: 0 20px 18px; gap: 10px; }
+  .ticket-id-bar { margin: 0 20px; }
+  .ticket-actions { padding: 18px 20px 24px; }
 
-  .qr-frame canvas { width: 200px !important; height: 200px !important; }
+  .qr-frame canvas { width: 190px !important; height: 190px !important; }
 }

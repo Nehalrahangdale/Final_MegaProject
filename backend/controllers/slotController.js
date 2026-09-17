@@ -1,7 +1,14 @@
 const Slot = require("../models/Slot");
+const Parking = require("../models/Parking");
+const Booking = require("../models/Booking");
+const {
+    checkAndReleaseExpiredBookings,
+    computeStartAndEndDates
+} = require("../services/bookingExpiryService");
 
 // ===============================
 // Add Slot
+
 // ===============================
 const addSlot = async (req, res) => {
     try {
@@ -93,15 +100,85 @@ const getAllSlots = async (req, res) => {
 const getSlotsByParking = async (req, res) => {
     try {
         const { parkingId } = req.params;
+        const { bookingDate, startTime, duration } = req.query;
+        const io = req.app.get("io");
+
+        // Automatically clean and release any expired bookings for this parking
+        await checkAndReleaseExpiredBookings(io, parkingId);
 
         const slots = await Slot.find({
             parking: parkingId
         }).sort({ slotNumber: 1 });
 
+        const now = new Date();
+        let activeBookings = [];
+        let isCustomWindow = false;
+
+        if (bookingDate && startTime) {
+            // Determine conflict window based on requested booking time
+            isCustomWindow = true;
+            const { startDateTime: reqStart, endDateTime: reqEnd } = computeStartAndEndDates(
+                bookingDate,
+                startTime,
+                duration || 1
+            );
+
+            activeBookings = await Booking.find({
+                parking: parkingId,
+                status: "Booked",
+                startDateTime: { $lt: reqEnd },
+                endDateTime: { $gt: reqStart }
+            });
+        } else {
+            // Default to currently ongoing bookings right now
+            activeBookings = await Booking.find({
+                parking: parkingId,
+                status: "Booked",
+                startDateTime: { $lte: now },
+                endDateTime: { $gt: now }
+            });
+        }
+
+        const activeSlotMap = new Map();
+        for (const b of activeBookings) {
+            activeSlotMap.set(String(b.slot), {
+                startTime: b.startTime,
+                endTime: b.endTime,
+                endDateTime: b.endDateTime,
+                bookingDate: b.bookingDate
+            });
+        }
+
+        const enrichedSlots = [];
+        for (const slot of slots) {
+            const slotObj = slot.toObject();
+            const active = activeSlotMap.get(String(slot._id));
+
+            if (active) {
+                slotObj.status = "Booked";
+                slotObj.activeBooking = active;
+            } else {
+                slotObj.status = "Available";
+            }
+
+            // If this was a live check (not custom future window), keep DB slot status in sync
+            if (!isCustomWindow && slot.status !== slotObj.status) {
+                await Slot.findByIdAndUpdate(slot._id, { status: slotObj.status });
+            }
+
+            enrichedSlots.push(slotObj);
+        }
+
+        // Keep Parking availableSlots count accurate
+        if (!isCustomWindow) {
+            const liveAvailableCount = enrichedSlots.filter(s => s.status === "Available").length;
+            await Parking.findByIdAndUpdate(parkingId, { availableSlots: liveAvailableCount });
+        }
+
         res.status(200).json({
             success: true,
-            count: slots.length,
-            slots
+            count: enrichedSlots.length,
+            slots: enrichedSlots
         });
 
     } catch (error) {
@@ -244,11 +321,65 @@ const deleteSlot = async (req, res) => {
 };
 
 
+// ===============================
+// Reset Slots of Parking to Available
+// ===============================
+const resetParkingSlots = async (req, res) => {
+    try {
+        const { parkingId } = req.params;
+        const parking = await Parking.findById(parkingId);
+        if (!parking) {
+            return res.status(404).json({
+                success: false,
+                message: "Parking not found"
+            });
+        }
+
+        await Slot.updateMany(
+            { parking: parkingId },
+            { $set: { status: "Available" } }
+        );
+
+        await Booking.updateMany(
+            { parking: parkingId, status: "Booked" },
+            { $set: { status: "Completed" } }
+        );
+
+        const totalSlots = await Slot.countDocuments({ parking: parkingId });
+        parking.availableSlots = totalSlots;
+        await parking.save();
+
+        const io = req.app.get("io");
+        if (io) {
+            io.to(`parking-${parkingId}`).emit("slotUpdated", {
+                type: "RESET_ALL",
+                availableSlots: totalSlots
+            });
+        }
+
+        const updatedSlots = await Slot.find({ parking: parkingId }).sort({ slotNumber: 1 });
+
+        res.status(200).json({
+            success: true,
+            message: "All slots reset to Available successfully",
+            availableSlots: totalSlots,
+            slots: updatedSlots
+        });
+    } catch (error) {
+        console.error("Reset Parking Slots Error:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 module.exports = {
     addSlot,
     getAllSlots,
     getSlotsByParking,
     getSlot,
     updateSlot,
-    deleteSlot
+    deleteSlot,
+    resetParkingSlots
 };

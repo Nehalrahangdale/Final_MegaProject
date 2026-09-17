@@ -45,8 +45,17 @@ function QRCodePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [downloaded, setDownloaded] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const qrRef = useRef(null);
+
+  const handleCopyCode = (text) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
 
   // Load Booking
   const loadBooking = useCallback(async () => {
@@ -178,6 +187,34 @@ function QRCodePage() {
             />
           </div>
           <p className="qr-scan-label">Scan at entry gate</p>
+        </div>
+
+        {/* Human-Readable Gate Passcode */}
+        <div className="human-code-card">
+          <div className="human-code-top">
+            <span className="human-code-tag">
+              <span className="human-code-dot" /> HUMAN CHECK-IN PASSCODE
+            </span>
+            <span className="human-code-sub">Manual Entry / Guard Verification</span>
+          </div>
+          <div className="human-code-display">
+            <div className="human-code-pill">
+              <span className="human-code-prefix">GATE PIN</span>
+              <span className="human-code-digits">
+                {booking._id ? `NPK-${booking._id.slice(-6).toUpperCase()}` : "NPK-PASS"}
+              </span>
+            </div>
+            <button
+              type="button"
+              className={`human-code-copy-btn ${copied ? "copied" : ""}`}
+              onClick={() =>
+                handleCopyCode(`NPK-${booking._id?.slice(-6).toUpperCase()}`)
+              }
+              title="Copy Gate Passcode"
+            >
+              {copied ? "✓ Copied!" : "Copy Code"}
+            </button>
+          </div>
         </div>
 
         {/* Details Grid */}

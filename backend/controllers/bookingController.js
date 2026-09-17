@@ -2,6 +2,10 @@ const Booking = require("../models/Booking");
 const Parking = require("../models/Parking");
 const Slot = require("../models/Slot");
 const qrService = require("../services/qrService");
+const {
+    computeStartAndEndDates,
+    checkAndReleaseExpiredBookings,
+} = require("../services/bookingExpiryService");
 
 // =====================================================
 // CREATE BOOKING
@@ -65,29 +69,40 @@ const createBooking = async (req, res) => {
             });
         }
 
-        // -----------------------------
-        // Check Slot Status
-        // -----------------------------
-        if (slot.status === "Booked") {
-            return res.status(400).json({
-                success: false,
-                message: "This slot is already booked"
-            });
-        }
+        const io = req.app.get("io");
 
         // -----------------------------
-        // Check Duplicate Booking
+        // Auto-release any expired bookings first
+        // -----------------------------
+        await checkAndReleaseExpiredBookings(io, parkingId);
+
+        // -----------------------------
+        // Compute exact timestamps
+        // -----------------------------
+        const { startDateTime, endDateTime, endTime } = computeStartAndEndDates(
+            bookingDate,
+            startTime,
+            duration
+        );
+
+        // -----------------------------
+        // Check Overlapping Active Booking
         // -----------------------------
         const existingBooking = await Booking.findOne({
             slot: slotId,
-            bookingDate: new Date(bookingDate),
-            status: "Booked"
+            status: "Booked",
+            $or: [
+                {
+                    startDateTime: { $lt: endDateTime },
+                    endDateTime: { $gt: startDateTime }
+                }
+            ]
         });
 
         if (existingBooking) {
             return res.status(400).json({
                 success: false,
-                message: "This slot is already booked for this date"
+                message: `This slot is already booked between ${existingBooking.startTime} and ${existingBooking.endTime}. Please choose another slot or time.`
             });
         }
 
@@ -98,33 +113,7 @@ const createBooking = async (req, res) => {
             Number(parking.pricePerHour) *
             Number(duration);
 
-        // Don't trust amount coming from frontend
         const finalAmount = totalAmount;
-
-        // -----------------------------
-        // Calculate End Time
-        // -----------------------------
-        const [hours, minutes] = startTime
-            .split(":")
-            .map(Number);
-
-        const startDate = new Date();
-
-        startDate.setHours(hours);
-        startDate.setMinutes(minutes);
-        startDate.setSeconds(0);
-        startDate.setMilliseconds(0);
-
-        const endDate = new Date(startDate);
-
-        endDate.setHours(
-            endDate.getHours() + Number(duration)
-        );
-
-        const endTime =
-            String(endDate.getHours()).padStart(2, "0") +
-            ":" +
-            String(endDate.getMinutes()).padStart(2, "0");
 
         // -----------------------------
         // Create Booking
@@ -136,6 +125,8 @@ const createBooking = async (req, res) => {
             bookingDate: new Date(bookingDate),
             startTime,
             endTime,
+            startDateTime,
+            endDateTime,
             duration: Number(duration),
             totalAmount: finalAmount,
             status: "Booked"
@@ -158,7 +149,6 @@ const createBooking = async (req, res) => {
         // -----------------------------
         // Socket.IO Real-Time Update
         // -----------------------------
-        const io = req.app.get("io");
         if (io) {
             io.to(`parking-${parkingId}`).emit("slotUpdated", {
                 type: "BOOKED",
@@ -205,6 +195,9 @@ const createBooking = async (req, res) => {
 // =====================================================
 const getMyBookings = async (req, res) => {
     try {
+        const io = req.app.get("io");
+        await checkAndReleaseExpiredBookings(io);
+
         const bookings = await Booking.find({
             user: req.user._id
         })
@@ -294,6 +287,9 @@ const getBookingById = async (req, res) => {
 // =====================================================
 const getAllBookings = async (req, res) => {
     try {
+        const io = req.app.get("io");
+        await checkAndReleaseExpiredBookings(io);
+
         const bookings = await Booking.find()
             .populate(
                 "user",

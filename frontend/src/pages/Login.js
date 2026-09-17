@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import NextParkLogo from "../components/NextParkLogo";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isSessionExpired = new URLSearchParams(location.search).get("sessionExpired") === "true";
 
   const [formData, setFormData] = useState({
     email: "",
@@ -50,8 +52,6 @@ function Login() {
         "user",
         JSON.stringify(data.user)
       );
-
-      alert("✅ Login Successful");
 
       // =================================
       // Role Based Redirect
@@ -99,6 +99,17 @@ function Login() {
             <h2 className="text-center mb-4">
               🔐 Login
             </h2>
+
+            {/* Session Expired Banner */}
+            {isSessionExpired && (
+              <div
+                className="alert alert-warning d-flex align-items-center mb-4 py-2 px-3 shadow-sm border-0"
+                style={{ borderRadius: "10px", fontSize: "14px" }}
+                role="alert"
+              >
+                <span>⚠️ Your session has expired. Please log in again to continue.</span>
+              </div>
+            )}
 
             {/* Form */}
 

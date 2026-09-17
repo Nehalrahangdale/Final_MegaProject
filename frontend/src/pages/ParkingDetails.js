@@ -290,6 +290,11 @@ function ParkingDetails() {
                   "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=1200"
                 }
                 alt={parking.name}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src =
+                    "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=1200";
+                }}
               />
 
               <div className="details-price">

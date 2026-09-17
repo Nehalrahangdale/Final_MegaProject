@@ -7,15 +7,20 @@ function ParkingCard({ parking }) {
   return (
     <div className="col-md-6 col-lg-4 mb-4">
       <div className="card shadow-sm h-100 border-0 overflow-hidden">
-        <div style={{ position: "relative", height: "200px", overflow: "hidden" }}>
+        <div style={{ position: "relative", height: "220px", overflow: "hidden", background: "#f1f5f9" }}>
           <img
             src={
               parking.image ||
               "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800"
             }
             className="card-img-top w-100 h-100"
-            style={{ objectFit: "cover" }}
+            style={{ objectFit: "cover", objectPosition: "center" }}
             alt={parking.name}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src =
+                "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800";
+            }}
           />
           <span
             className="badge bg-dark text-white px-3 py-2"

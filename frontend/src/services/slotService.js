@@ -23,12 +23,12 @@ export const getAllSlots = async () => {
 // ===============================
 // Get Slots By Parking ID
 // ===============================
-export const getSlotsByParking = async (parkingId) => {
+export const getSlotsByParking = async (parkingId, params = {}) => {
   if (!parkingId) {
     throw new Error("parkingId is required");
   }
 
-  const res = await API.get(`/slots/parking/${parkingId}`);
+  const res = await API.get(`/slots/parking/${parkingId}`, { params });
   return res.data;
 };
 

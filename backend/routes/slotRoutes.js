@@ -8,7 +8,8 @@ const {
     getSlotsByParking,
     getSlot,
     updateSlot,
-    deleteSlot
+    deleteSlot,
+    resetParkingSlots
 } = require("../controllers/slotController");
 
 const {
@@ -57,6 +58,14 @@ router.delete(
     protect,
     authorize("owner", "admin"),
     deleteSlot
+);
+
+// Reset all slots of parking to Available
+router.put(
+    "/parking/:parkingId/reset",
+    protect,
+    authorize("owner", "admin"),
+    resetParkingSlots
 );
 
 module.exports = router;

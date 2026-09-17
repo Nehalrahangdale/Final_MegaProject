@@ -103,6 +103,13 @@ io.on("connection", (socket) => {
     );
   });
 
+  socket.on("simulateSlotUpdate", (payload) => {
+    if (payload && payload.parkingId) {
+      io.to(`parking-${payload.parkingId}`).emit("slotUpdated", payload);
+      console.log(`⚡ Real-time Simulation Broadcast: Slot ${payload.slot?.slotNumber} -> ${payload.slot?.status}`);
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("❌ User disconnected:", socket.id);
   });
@@ -123,6 +130,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // =======================
 // Routes
@@ -202,4 +210,12 @@ server.listen(PORT, () => {
   );
 
   console.log("🔌 Socket.IO is running");
+
+  // Start background auto-expiry worker
+  try {
+    const { startBookingExpiryWorker } = require("./services/bookingExpiryService");
+    startBookingExpiryWorker(io);
+  } catch (workerErr) {
+    console.warn("⚠️ Could not start booking expiry worker:", workerErr.message);
+  }
 });
