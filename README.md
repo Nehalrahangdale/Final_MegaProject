@@ -231,7 +231,7 @@ React UI
 
 **Frontend**
 - JavaScript
-- React / Next.js ecosystem
+- React (Create React App)
 - Chart.js & react-chartjs-2
 - Socket.IO Client
 - Leaflet & React-Leaflet
@@ -253,6 +253,11 @@ React UI
 
 ```text
 next-park-ai/
+├── ai/
+│   ├── parking_prediction.py
+│   ├── predict.py
+│   ├── parking_model.pkl
+│   └── requirements.txt
 ├── backend/
 │   ├── config/
 │   ├── controllers/
@@ -286,7 +291,7 @@ next-park-ai/
 Follow the complete step-by-step [Production Deployment Guide](file:///c:/Users/sbise/NEXT%20PARK%20AI/DEPLOYMENT.md):
 
 1. **Step 1: MongoDB Atlas database setup** (Free M0 Cluster, `0.0.0.0/0` IP whitelist, database user).
-2. **Step 2: Backend Render par deploy** (Web Service connecting `sumitbisen/next-park-ai`, root directory `backend`, build command `npm install`, start command `npm start`).
+2. **Step 2: Backend Render par deploy** (Web Service connecting `sumitbisen/next-park-ai` from the repository root, installing Node dependencies from `backend/` plus Python ML dependencies from `ai/`, then starting `node backend/server.js`).
 3. **Step 3: Frontend Vercel par deploy** (React SPA connecting `sumitbisen/next-park-ai`, root directory `frontend`, rewrites in `vercel.json`).
 4. **Step 4: Environment variables configure** (Sync keys from `backend/.env.example` to Render and `frontend/.env.example` to Vercel).
 5. **Step 5: CORS update** (Express and Socket.IO dynamically allow `CLIENT_URL` and `*.vercel.app`).
