@@ -254,12 +254,12 @@ const getBookingById = async (req, res) => {
             });
         }
 
-        // User can only see own booking
-        if (
-            req.user.role === "user" &&
-            booking.user._id.toString() !==
-                req.user._id.toString()
-        ) {
+        // User can only see own booking (admin can see all)
+        const bookingUserId = booking.user ? (booking.user._id || booking.user).toString() : null;
+        const reqUserId = req.user._id.toString();
+        const isAdmin = req.user.role === "admin";
+
+        if (bookingUserId && bookingUserId !== reqUserId && !isAdmin) {
             return res.status(403).json({
                 success: false,
                 message: "Access denied"
@@ -497,6 +497,22 @@ const getBookingQR = async (req, res) => {
             });
         }
 
+        // Strict Payment Status Check
+        if (booking.paymentStatus !== "Paid") {
+            return res.status(402).json({
+                success: false,
+                message: "Payment Required: QR ticket cannot be generated for unpaid bookings.",
+            });
+        }
+
+        // Cancellation Check
+        if (booking.status === "Cancelled") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Request: QR ticket cannot be generated for a cancelled booking.",
+            });
+        }
+
         const qrData = await qrService.generateBookingQR(booking);
 
         res.status(200).json({
@@ -537,10 +553,27 @@ const verifyBookingQR = async (req, res) => {
             });
         }
 
-        const booking = await Booking.findById(decoded.bookingId)
-            .populate("user", "name email phone")
-            .populate("parking", "name address city")
-            .populate("slot", "slotNumber vehicleType status");
+        let booking;
+
+        if (decoded.bookingId) {
+            booking = await Booking.findById(decoded.bookingId)
+                .populate("user", "name email phone")
+                .populate("parking", "name address city pricePerHour")
+                .populate("slot", "slotNumber vehicleType status");
+        }
+
+        // Try PIN resolution if direct ID didn't match
+        if (!booking && decoded.pin) {
+            const cleanPin = decoded.pin.toLowerCase();
+            const candidates = await Booking.find()
+                .populate("user", "name email phone")
+                .populate("parking", "name address city pricePerHour")
+                .populate("slot", "slotNumber vehicleType status")
+                .sort({ createdAt: -1 })
+                .limit(50);
+
+            booking = candidates.find(b => b._id.toString().toLowerCase().endsWith(cleanPin));
+        }
 
         if (!booking) {
             return res.status(404).json({
@@ -549,17 +582,141 @@ const verifyBookingQR = async (req, res) => {
             });
         }
 
+        // Validate payment status of scanned ticket
+        if (booking.paymentStatus !== "Paid") {
+            return res.status(402).json({
+                success: false,
+                message: "Invalid Ticket: Booking payment has not been completed.",
+            });
+        }
+
+        // Validate booking cancellation
+        if (booking.status === "Cancelled") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Ticket: This booking reservation was cancelled.",
+            });
+        }
+
         res.status(200).json({
             success: true,
             message: "QR Ticket verified successfully",
             booking,
-            ticketPayload: decoded.payload,
+            ticketPayload: decoded.payload || {
+                bookingId: booking._id,
+                pin: `NPK-${booking._id.toString().slice(-6).toUpperCase()}`,
+                slot: booking.slot?.slotNumber,
+                status: booking.status,
+                paymentStatus: booking.paymentStatus,
+            },
         });
     } catch (error) {
         console.error("Verify QR Error:", error);
         res.status(500).json({
             success: false,
             message: error.message,
+        });
+    }
+};
+
+// =====================================================
+// PUBLIC TICKET VERIFICATION (For Mobile Cameras, Web, Guards)
+// =====================================================
+const publicVerifyBooking = async (req, res) => {
+    try {
+        const queryId = req.params.id || req.query.id || req.query.bookingId || req.query.pin;
+
+        if (!queryId) {
+            return res.status(400).json({
+                success: false,
+                isValid: false,
+                message: "Booking ID or Gate Passcode is required",
+            });
+        }
+
+        let booking;
+
+        // Try direct ObjectId match
+        if (/^[a-f0-9]{24}$/i.test(queryId)) {
+            booking = await Booking.findById(queryId)
+                .populate("user", "name email phone")
+                .populate("parking", "name address city pricePerHour image")
+                .populate("slot", "slotNumber vehicleType status");
+        }
+
+        // Try PIN match (e.g. NPK-D02BA85F or D02BA85F)
+        if (!booking) {
+            const cleanPin = queryId.replace(/^NPK-/i, "").toLowerCase();
+            const candidateBookings = await Booking.find()
+                .populate("user", "name email phone")
+                .populate("parking", "name address city pricePerHour image")
+                .populate("slot", "slotNumber vehicleType status")
+                .sort({ createdAt: -1 })
+                .limit(50);
+
+            booking = candidateBookings.find(b =>
+                b._id.toString().toLowerCase().endsWith(cleanPin)
+            );
+        }
+
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                isValid: false,
+                message: "No matching parking reservation found",
+            });
+        }
+
+        // Check Payment Status & Flags
+        const isPaid = booking.paymentStatus === "Paid";
+        const isCancelled = booking.status === "Cancelled";
+
+        let accessStatus = "GRANTED";
+        let message = "Gate Pass Valid: Access Authorized.";
+
+        if (isCancelled) {
+            accessStatus = "DENIED_CANCELLED";
+            message = "Access Denied: This reservation was cancelled.";
+        } else if (!isPaid) {
+            accessStatus = "DENIED_UNPAID";
+            message = "Access Denied: Payment is pending for this booking.";
+        }
+
+        const now = new Date();
+        const hasExpired = booking.endDateTime && new Date(booking.endDateTime) < now;
+
+        res.status(200).json({
+            success: true,
+            isValid: isPaid && !isCancelled,
+            accessStatus,
+            hasExpired,
+            message,
+            booking: {
+                id: booking._id,
+                pin: `NPK-${booking._id.toString().slice(-6).toUpperCase()}`,
+                customerName: booking.user?.name || "Customer",
+                customerPhone: booking.user?.phone || "N/A",
+                parkingName: booking.parking?.name || "Parking Facility",
+                parkingAddress: booking.parking?.address || "",
+                parkingCity: booking.parking?.city || "Nagpur",
+                slotNumber: booking.slot?.slotNumber || "N/A",
+                vehicleType: booking.slot?.vehicleType || "Car",
+                bookingDate: booking.bookingDate,
+                startTime: booking.startTime,
+                endTime: booking.endTime,
+                duration: booking.duration,
+                totalAmount: booking.totalAmount,
+                paymentStatus: booking.paymentStatus,
+                paymentId: booking.paymentId || "N/A",
+                bookingStatus: booking.status,
+            },
+        });
+    } catch (error) {
+        console.error("Public Verify Ticket Error:", error);
+        res.status(500).json({
+            success: false,
+            isValid: false,
+            message: error.message || "Failed to verify ticket",
         });
     }
 };
@@ -573,4 +730,5 @@ module.exports = {
     completeBooking,
     getBookingQR,
     verifyBookingQR,
+    publicVerifyBooking,
 };

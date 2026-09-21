@@ -8,6 +8,7 @@ const {
   cancelBooking,
   getBookingQR,
   verifyBookingQR,
+  publicVerifyBooking,
 } = require("../controllers/bookingController");
 
 const {
@@ -24,8 +25,12 @@ router.post("/", protect, createBooking);
 // Logged-in User Bookings
 router.get("/my", protect, getMyBookings);
 
+// Public Ticket Verification (Normal phone cameras, web readers, guards)
+router.get("/verify-public/:id", publicVerifyBooking);
+router.get("/verify-public", publicVerifyBooking);
+
 // Verify Scanned QR (Must be before /:id)
-router.post("/verify-qr", protect, verifyBookingQR);
+router.post("/verify-qr", verifyBookingQR);
 
 // Get Booking QR Code
 router.get("/:id/qr", protect, getBookingQR);

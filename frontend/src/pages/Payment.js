@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import {
-  FaCheckCircle,
   FaLock,
   FaShieldAlt,
   FaCreditCard,
@@ -13,8 +12,8 @@ import {
   FaArrowRight,
   FaArrowLeft,
   FaCheck,
-  FaBolt,
 } from "react-icons/fa";
+import { QRCodeCanvas } from "qrcode.react";
 
 import {
   createPaymentOrder,
@@ -34,6 +33,20 @@ function Payment() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("upi");
+
+  // Mock Gateway State
+  const [showMockModal, setShowMockModal] = useState(false);
+  const [mockOrder, setMockOrder] = useState(null);
+  const [mockProcessing, setMockProcessing] = useState(false);
+  const [mockMethod, setMockMethod] = useState("upi");
+  const [mockUpiId, setMockUpiId] = useState("student.pce@okaxis");
+  const [mockCard, setMockCard] = useState({
+    number: "4532 8901 2345 6789",
+    exp: "12/28",
+    cvv: "888",
+    name: "PCE Student",
+  });
+  const [mockBank, setMockBank] = useState("HDFC Bank");
 
   // =====================================
   // Load Booking
@@ -67,6 +80,60 @@ function Payment() {
   }, [loadBooking]);
 
   // =====================================
+  // Mock Gateway Actions
+  // =====================================
+  const handleConfirmMockPayment = async () => {
+    if (!mockOrder || !booking) return;
+
+    try {
+      setMockProcessing(true);
+      setPaymentError(null);
+
+      // Realistic bank authorization delay (1.2s)
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+
+      const verifyData = await verifyPayment({
+        razorpay_order_id: mockOrder.id,
+        razorpay_payment_id: `pay_sim_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        razorpay_signature: "mock_signature_test",
+      });
+
+      if (!verifyData.success) {
+        throw new Error(verifyData.message || "Payment verification failed.");
+      }
+
+      setMockProcessing(false);
+      setShowMockModal(false);
+      setPaymentSuccess(true);
+
+      setTimeout(() => {
+        navigate(`/qr-ticket?bookingId=${booking._id}`);
+      }, 1200);
+    } catch (err) {
+      console.error("Mock Verification Error:", err);
+      setPaymentError(
+        err.response?.data?.message ||
+          err.message ||
+          "Payment verification failed."
+      );
+      setMockProcessing(false);
+    }
+  };
+
+  const handleDeclineMockPayment = () => {
+    setShowMockModal(false);
+    setMockProcessing(false);
+    setPaymentError(
+      "❌ Transaction declined by issuing bank (Simulated Failure). Reservation remains in 'Pending' status. You can pay later from your dashboard."
+    );
+  };
+
+  const handleCancelPayment = () => {
+    setShowMockModal(false);
+    navigate("/user/dashboard");
+  };
+
+  // =====================================
   // Handle Payment
   // =====================================
   const handlePayment = async () => {
@@ -93,36 +160,10 @@ function Payment() {
       // Check for Mock Test Mode
       // =====================================
       if (data.order?.isMock) {
-        setTimeout(async () => {
-          try {
-            const verifyData = await verifyPayment({
-              razorpay_order_id: data.order.id,
-              razorpay_payment_id: `pay_mock_${Date.now()}`,
-              razorpay_signature: "mock_signature_test",
-            });
-
-            if (!verifyData.success) {
-              throw new Error(
-                verifyData.message || "Payment verification failed."
-              );
-            }
-
-            setPaymentSuccess(true);
-            setPaymentLoading(false);
-
-            setTimeout(() => {
-              navigate(`/qr-ticket?bookingId=${booking._id}`);
-            }, 1400);
-          } catch (err) {
-            console.error("Mock Verification Error:", err);
-            setPaymentError(
-              err.response?.data?.message ||
-                err.message ||
-                "Payment verification failed."
-            );
-            setPaymentLoading(false);
-          }
-        }, 1000);
+        setMockOrder(data.order);
+        setMockMethod(paymentMethod);
+        setShowMockModal(true);
+        setPaymentLoading(false);
         return;
       }
 
@@ -488,6 +529,201 @@ function Payment() {
             )}
           </div>
         </div>
+      {/* =====================================
+          MOCK PAYMENT GATEWAY MODAL
+      ====================================== */}
+      {showMockModal && (
+        <div className="mock-gateway-backdrop">
+          <div className="mock-gateway-modal">
+            {/* Modal Header */}
+            <div className="mock-modal-header">
+              <div className="mock-modal-brand">
+                <div className="mock-modal-brand-icon">🅿️</div>
+                <div>
+                  <h5 className="mock-modal-brand-title">NextPark AI Checkout</h5>
+                  <p className="mock-modal-brand-sub">Simulated Payment Gateway</p>
+                </div>
+              </div>
+              <span className="mock-modal-amount-chip">
+                ₹{booking.totalAmount}
+              </span>
+            </div>
+
+            {/* Modal Body */}
+            <div className="mock-modal-body">
+              {/* Method Switcher Tabs */}
+              <div className="mock-tabs">
+                <button
+                  type="button"
+                  className={`mock-tab-btn ${mockMethod === "upi" ? "active" : ""}`}
+                  onClick={() => setMockMethod("upi")}
+                >
+                  <FaMobileAlt /> UPI / QR
+                </button>
+                <button
+                  type="button"
+                  className={`mock-tab-btn ${mockMethod === "card" ? "active" : ""}`}
+                  onClick={() => setMockMethod("card")}
+                >
+                  <FaCreditCard /> Card
+                </button>
+                <button
+                  type="button"
+                  className={`mock-tab-btn ${mockMethod === "netbanking" ? "active" : ""}`}
+                  onClick={() => setMockMethod("netbanking")}
+                >
+                  <FaUniversity /> Net Banking
+                </button>
+              </div>
+
+              {/* UPI Tab */}
+              {mockMethod === "upi" && (
+                <div className="mock-upi-card">
+                  <div className="mock-qr-wrap">
+                    <QRCodeCanvas
+                      value={`upi://pay?pa=nextpark@axisbank&pn=NextParkAI&am=${booking.totalAmount}&cu=INR`}
+                      size={140}
+                      level="M"
+                      includeMargin={false}
+                    />
+                  </div>
+                  <p className="small text-muted mb-2 fw-bold">
+                    Scan with any UPI App (GPay, PhonePe, Paytm)
+                  </p>
+                  <div className="mock-upi-apps">
+                    <span className="mock-app-badge">Google Pay</span>
+                    <span className="mock-app-badge">PhonePe</span>
+                    <span className="mock-app-badge">Paytm</span>
+                    <span className="mock-app-badge">BHIM</span>
+                  </div>
+
+                  <div className="mt-3 text-start">
+                    <label className="small text-muted fw-bold mb-1">Or enter UPI ID</label>
+                    <input
+                      type="text"
+                      className="mock-input"
+                      value={mockUpiId}
+                      onChange={(e) => setMockUpiId(e.target.value)}
+                      placeholder="username@upi"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Card Tab */}
+              {mockMethod === "card" && (
+                <div className="mock-card-form">
+                  <div className="mock-input-group">
+                    <label>Card Number</label>
+                    <input
+                      type="text"
+                      className="mock-input"
+                      value={mockCard.number}
+                      onChange={(e) => setMockCard({ ...mockCard, number: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="d-flex gap-2">
+                    <div className="mock-input-group" style={{ flex: 1 }}>
+                      <label>Valid Thru</label>
+                      <input
+                        type="text"
+                        className="mock-input"
+                        value={mockCard.exp}
+                        onChange={(e) => setMockCard({ ...mockCard, exp: e.target.value })}
+                      />
+                    </div>
+                    <div className="mock-input-group" style={{ flex: 1 }}>
+                      <label>CVV</label>
+                      <input
+                        type="password"
+                        className="mock-input"
+                        value={mockCard.cvv}
+                        onChange={(e) => setMockCard({ ...mockCard, cvv: e.target.value })}
+                        maxLength={3}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mock-input-group">
+                    <label>Cardholder Name</label>
+                    <input
+                      type="text"
+                      className="mock-input"
+                      value={mockCard.name}
+                      onChange={(e) => setMockCard({ ...mockCard, name: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mt-1">
+                    <span className="badge bg-success bg-opacity-10 text-success py-1 px-2">
+                      ✓ Auto-Filled Test Visa Card
+                    </span>
+                    <small className="text-muted">Safe sandbox mode</small>
+                  </div>
+                </div>
+              )}
+
+              {/* Net Banking Tab */}
+              {mockMethod === "netbanking" && (
+                <div>
+                  <label className="small text-muted fw-bold mb-2 d-block">Select Bank</label>
+                  <div className="mock-bank-grid">
+                    {["HDFC Bank", "State Bank of India", "ICICI Bank", "Axis Bank", "Kotak Bank", "Punjab National Bank"].map((b) => (
+                      <div
+                        key={b}
+                        className={`mock-bank-item ${mockBank === b ? "selected" : ""}`}
+                        onClick={() => setMockBank(b)}
+                      >
+                        {b}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="mock-modal-footer">
+              <button
+                type="button"
+                className="mock-btn-pay"
+                onClick={handleConfirmMockPayment}
+                disabled={mockProcessing}
+              >
+                {mockProcessing ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm" />
+                    Connecting to Bank & Authorizing...
+                  </>
+                ) : (
+                  <>
+                    <FaLock size={13} /> Authorize & Pay ₹{booking.totalAmount}
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                className="mock-btn-decline"
+                onClick={handleDeclineMockPayment}
+                disabled={mockProcessing}
+              >
+                Simulate Payment Failure (Bank Decline)
+              </button>
+
+              <button
+                type="button"
+                className="mock-btn-cancel"
+                onClick={handleCancelPayment}
+                disabled={mockProcessing}
+              >
+                Cancel & Pay Later (Keep as Pending)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );

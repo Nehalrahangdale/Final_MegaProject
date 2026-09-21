@@ -45,12 +45,22 @@ const createOrder = async (req, res) => {
       });
     }
 
-    // Check booking belongs to logged-in user
-    if (booking.user.toString() !== req.user._id.toString()) {
+    // Robust User Authorization Check
+    const bookingUserId = booking.user ? (booking.user._id || booking.user).toString() : null;
+    const reqUserId = req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (bookingUserId && bookingUserId !== reqUserId && !isAdmin) {
       return res.status(403).json({
         success: false,
         message: "You are not authorized for this booking",
       });
+    }
+
+    // If booking user was unassigned, link to logged in user
+    if (!booking.user) {
+      booking.user = req.user._id;
+      await booking.save();
     }
 
     // Check payment already completed
@@ -190,11 +200,12 @@ const verifyPayment = async (req, res) => {
       });
     }
 
-    // Check payment belongs to logged-in user
-    if (
-      payment.user.toString() !==
-      req.user._id.toString()
-    ) {
+    // Robust User Authorization Check
+    const paymentUserId = payment.user ? (payment.user._id || payment.user).toString() : null;
+    const reqUserId = req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (paymentUserId && paymentUserId !== reqUserId && !isAdmin) {
       return res.status(403).json({
         success: false,
         message: "You are not authorized for this payment",

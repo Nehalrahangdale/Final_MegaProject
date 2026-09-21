@@ -20,6 +20,8 @@ import Booking from "./pages/Booking";
 import Payment from "./pages/Payment";
 import NotFound from "./pages/NotFound";
 import Unauthorized from "./pages/Unauthorized";
+import VerifyTicket from "./pages/VerifyTicket";
+import GateScanner from "./pages/GateScanner";
 
 // Dashboard Pages
 import UserDashboard from "./pages/UserDashboard";
@@ -69,6 +71,16 @@ function App() {
             <Route
               path="/parking/:id"
               element={<ParkingDetails />}
+            />
+
+            <Route
+              path="/verify-ticket"
+              element={<VerifyTicket />}
+            />
+
+            <Route
+              path="/gate-scanner"
+              element={<GateScanner />}
             />
 
             {/* ================= PROTECTED ROUTES ================= */}

@@ -10,6 +10,8 @@ import {
   FaRupeeSign,
   FaTimesCircle,
   FaSyncAlt,
+  FaQrcode,
+  FaCreditCard,
 } from "react-icons/fa";
 
 import {
@@ -556,22 +558,34 @@ function UserDashboard() {
 
                 </div>
 
-                {booking.paymentStatus === "Paid" && (
-                  <button
-                    className="cancel-btn"
-                    style={{
-                      background: "linear-gradient(135deg, #0d6efd, #0a58ca)",
-                      border: "none",
-                      marginRight: "8px"
-                    }}
-                    onClick={() =>
-                      navigate(
-                        `/qr-ticket?bookingId=${booking._id}`
-                      )
-                    }
-                  >
-                    🔲 View QR Ticket
-                  </button>
+                {booking.status !== "Cancelled" ? (
+                  booking.paymentStatus === "Paid" ? (
+                    <button
+                      className="ticket-btn"
+                      onClick={() =>
+                        navigate(
+                          `/qr-ticket?bookingId=${booking._id}`
+                        )
+                      }
+                      title="View Entrance Pass"
+                    >
+                      <FaQrcode /> View QR Ticket
+                    </button>
+                  ) : (
+                    <button
+                      className="pay-now-btn"
+                      onClick={() =>
+                        navigate(
+                          `/payment?bookingId=${booking._id}`
+                        )
+                      }
+                      title="Complete payment for this reservation"
+                    >
+                      <FaCreditCard /> Pay Now (₹{booking.totalAmount || 0})
+                    </button>
+                  )
+                ) : (
+                  <span className="cancelled-note">Reservation Cancelled</span>
                 )}
 
                 {booking.status ===

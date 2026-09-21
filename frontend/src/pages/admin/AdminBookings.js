@@ -11,6 +11,7 @@ import {
   FaTimesCircle,
   FaDownload,
   FaQrcode,
+  FaLock,
 } from "react-icons/fa";
 
 import { getAllBookings } from "../../services/adminService";
@@ -468,14 +469,28 @@ const AdminBookings = () => {
 
                       {/* QR Ticket Action */}
                       <td>
-                        <button
-                          className="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1"
-                          style={{ borderRadius: "8px", fontSize: "11px", fontWeight: "600" }}
-                          onClick={() => navigate(`/qr-ticket?bookingId=${booking._id}`)}
-                          title="View & Download QR Ticket"
-                        >
-                          <FaQrcode /> QR Ticket
-                        </button>
+                        {booking.status === "Cancelled" ? (
+                          <span className="badge bg-danger bg-opacity-10 text-danger border border-danger" style={{ fontSize: "10px", padding: "4px 8px" }}>
+                            Cancelled
+                          </span>
+                        ) : booking.paymentStatus === "Paid" ? (
+                          <button
+                            className="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1"
+                            style={{ borderRadius: "8px", fontSize: "11px", fontWeight: "600" }}
+                            onClick={() => navigate(`/qr-ticket?bookingId=${booking._id}`)}
+                            title="View & Download QR Ticket"
+                          >
+                            <FaQrcode /> QR Ticket
+                          </button>
+                        ) : (
+                          <span
+                            className="badge bg-warning bg-opacity-10 text-warning border border-warning d-inline-flex align-items-center gap-1"
+                            style={{ fontSize: "10px", padding: "4px 8px" }}
+                            title="Ticket locked until customer pays"
+                          >
+                            <FaLock size={9} /> QR Locked (Unpaid)
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))

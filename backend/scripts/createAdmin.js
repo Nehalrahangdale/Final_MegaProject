@@ -7,10 +7,7 @@ const dotenv = require("dotenv");
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
 mongoose
-  .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/smart_parking", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/smart_parking")
   .then(async () => {
     console.log("Connected to MongoDB");
 

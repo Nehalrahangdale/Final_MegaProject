@@ -13,7 +13,6 @@ import {
   FaShieldAlt,
   FaBolt,
   FaArrowRight,
-  FaSyncAlt,
 } from "react-icons/fa";
 
 import { getParkingById } from "../services/parkingService";

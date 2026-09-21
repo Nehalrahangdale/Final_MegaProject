@@ -1,0 +1,281 @@
+/* =========================================================
+   GATE SCANNER PAGE - GUARD & ACCESS TERMINAL STYLING
+   ========================================================= */
+
+.gate-scanner-wrapper {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 0%, #0f172a 0%, #020617 100%);
+  color: #f8fafc;
+  padding: 40px 16px 60px;
+}
+
+.gate-scanner-container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.scanner-terminal-card {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+
+.scanner-terminal-header {
+  padding: 24px 28px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.scanner-terminal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scanner-terminal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.scanner-terminal-title h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.scanner-terminal-title p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.scanner-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.scanner-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: blink 1.2s infinite;
+}
+
+/* Tabs */
+.scanner-mode-tabs {
+  display: flex;
+  background: rgba(30, 41, 59, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px;
+  gap: 6px;
+}
+
+.scanner-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.scanner-tab-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+/* Camera Viewport */
+.scanner-camera-box {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 320px;
+  margin: 28px auto 16px;
+  background: #000000;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.8);
+}
+
+.scanner-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanner-viewfinder-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scanner-target-reticle {
+  width: 220px;
+  height: 220px;
+  border: 2px solid rgba(56, 189, 248, 0.7);
+  border-radius: 16px;
+  position: relative;
+  box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.45);
+}
+
+.scanner-scan-line {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+  box-shadow: 0 0 12px #38bdf8;
+  position: absolute;
+  top: 0;
+  animation: scanSweep 2s infinite ease-in-out;
+}
+
+@keyframes scanSweep {
+  0% { top: 4px; }
+  50% { top: calc(100% - 6px); }
+  100% { top: 4px; }
+}
+
+/* Reticle Corners */
+.scanner-reticle-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: #38bdf8;
+  border-style: solid;
+}
+.scanner-reticle-corner.tl { top: -2px; left: -2px; border-width: 4px 0 0 4px; border-top-left-radius: 12px; }
+.scanner-reticle-corner.tr { top: -2px; right: -2px; border-width: 4px 4px 0 0; border-top-right-radius: 12px; }
+.scanner-reticle-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 4px 4px; border-bottom-left-radius: 12px; }
+.scanner-reticle-corner.br { bottom: -2px; right: -2px; border-width: 0 4px 4px 0; border-bottom-right-radius: 12px; }
+
+/* Camera Controls */
+.scanner-cam-controls {
+  text-align: center;
+  padding: 0 24px 24px;
+}
+
+.scanner-cam-btn {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+
+.scanner-cam-btn.stop {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  box-shadow: none;
+}
+
+/* PIN Input Mode */
+.scanner-pin-box {
+  padding: 36px 28px;
+  text-align: center;
+}
+
+.scanner-pin-input {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-align: center;
+  text-transform: uppercase;
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 14px 20px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 18px;
+  outline: none;
+  display: block;
+  transition: border-color 0.2s;
+}
+
+.scanner-pin-input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+}
+
+.scanner-pin-submit {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+/* Verification Result Box */
+.scanner-result-box {
+  margin: 20px 24px 28px;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: verifyFadeIn 0.3s ease-out;
+}
+
+.scanner-result-box.valid {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+}
+
+.scanner-result-box.invalid {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+}

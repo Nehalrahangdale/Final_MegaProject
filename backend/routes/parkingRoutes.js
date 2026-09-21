@@ -47,6 +47,13 @@ router.get(
   getMyParking
 );
 
+router.get(
+  "/my-parking",
+  protect,
+  authorize("owner", "admin"),
+  getMyParking
+);
+
 // Get parking by ID
 router.get("/:id", getParkingById);
 

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaUserCircle, FaUsers, FaCalendarCheck, FaShieldAlt } from "react-icons/fa";
+import { FaUserCircle, FaUsers, FaCalendarCheck, FaShieldAlt, FaQrcode } from "react-icons/fa";
 import { MdLocalParking } from "react-icons/md";
 import NextParkLogo from "./NextParkLogo";
 
@@ -183,6 +183,18 @@ function Navbar() {
                     Contact
                   </Link>
                 </li>
+
+                {/* Gate Scanner */}
+                <li className="nav-item">
+                  <Link
+                    className="nav-link d-flex align-items-center gap-1"
+                    to="/gate-scanner"
+                    title="QR Gate Ticket Scanner"
+                  >
+                    <FaQrcode style={{ fontSize: "12px" }} />
+                    Gate Scanner
+                  </Link>
+                </li>
               </>
             )}
 
@@ -276,6 +288,17 @@ function Navbar() {
                       to={getDashboardPath()}
                     >
                       {getDashboardName()}
+                    </Link>
+                  </li>
+
+                  {/* Gate Scanner */}
+                  <li>
+                    <Link
+                      className="dropdown-item d-flex align-items-center gap-2"
+                      to="/gate-scanner"
+                    >
+                      <FaQrcode style={{ fontSize: "12px" }} />
+                      Gate Scanner Terminal
                     </Link>
                   </li>
 

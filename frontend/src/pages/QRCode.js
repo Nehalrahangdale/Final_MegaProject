@@ -121,6 +121,113 @@ function QRCodePage() {
     );
   }
 
+  if (booking.status === "Cancelled") {
+    return (
+      <div className="qr-page">
+        <div className="qr-grid-bg" />
+        <div className="qr-header">
+          <div className="qr-brand-badge" style={{ background: "#fee2e2", color: "#b91c1c", borderColor: "#fecaca" }}>
+            RESERVATION CANCELLED
+          </div>
+          <h1>Booking <span>Cancelled</span></h1>
+          <p>This reservation has been cancelled. The entry pass is deactivated.</p>
+        </div>
+
+        <div className="qr-ticket" style={{ maxWidth: "460px", textAlign: "center", padding: "36px 28px", margin: "0 auto" }}>
+          <div style={{ fontSize: "56px", marginBottom: "16px" }}>🚫</div>
+          <h3 style={{ fontWeight: 800, color: "#1e293b", marginBottom: "10px" }}>
+            Ticket Inactive
+          </h3>
+          <p style={{ color: "#64748b", fontSize: "14px", lineHeight: "1.6", marginBottom: "24px" }}>
+            Your booking #{booking._id?.slice(-8).toUpperCase()} for <strong>{booking.parking?.name || "Parking Lot"}</strong> was cancelled. Gate entry is no longer authorized.
+          </p>
+
+          <button
+            onClick={() => navigate("/user/dashboard")}
+            style={{
+              width: "100%",
+              padding: "12px 18px",
+              background: "#1e293b",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "10px",
+              fontWeight: 700,
+              fontSize: "14px",
+              cursor: "pointer"
+            }}
+          >
+            ← Return to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (booking.paymentStatus !== "Paid") {
+    return (
+      <div className="qr-page">
+        <div className="qr-grid-bg" />
+        <div className="qr-header">
+          <div className="qr-brand-badge" style={{ background: "#fef3c7", color: "#b45309", borderColor: "#fde68a" }}>
+            PAYMENT REQUIRED
+          </div>
+          <h1>QR Ticket <span>Locked</span></h1>
+          <p>Please complete payment to generate and unlock your digital entrance pass.</p>
+        </div>
+
+        <div className="qr-ticket" style={{ maxWidth: "460px", textAlign: "center", padding: "36px 28px", margin: "0 auto" }}>
+          <div style={{ fontSize: "56px", marginBottom: "16px" }}>🔒</div>
+          <h3 style={{ fontWeight: 800, color: "#1e293b", marginBottom: "10px" }}>
+            Payment Incomplete
+          </h3>
+          <p style={{ color: "#64748b", fontSize: "14px", lineHeight: "1.6", marginBottom: "24px" }}>
+            Reservation for <strong>{booking.parking?.name || "Parking Plaza"}</strong> (Slot: <strong>{booking.slot?.slotNumber || "N/A"}</strong>) has been reserved, but your gate entry QR ticket can only be generated after completing payment of <strong>₹{booking.totalAmount}</strong>.
+          </p>
+
+          <button
+            onClick={() => navigate(`/payment?bookingId=${booking._id}`)}
+            style={{
+              width: "100%",
+              padding: "13px 20px",
+              background: "linear-gradient(135deg, #10b981, #059669)",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "10px",
+              fontWeight: 700,
+              fontSize: "15px",
+              cursor: "pointer",
+              boxShadow: "0 6px 18px rgba(16, 185, 129, 0.35)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              marginBottom: "12px"
+            }}
+          >
+            💳 Complete Payment (₹{booking.totalAmount})
+          </button>
+
+          <button
+            onClick={() => navigate("/user/dashboard")}
+            style={{
+              width: "100%",
+              padding: "10px 16px",
+              background: "transparent",
+              color: "#64748b",
+              border: "1px solid #e2e8f0",
+              borderRadius: "10px",
+              fontWeight: 600,
+              fontSize: "13px",
+              cursor: "pointer"
+            }}
+          >
+            ← Back to My Bookings
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const qrData = buildQRPayload(booking);
 
   return (
@@ -189,17 +296,17 @@ function QRCodePage() {
           <p className="qr-scan-label">Scan at entry gate</p>
         </div>
 
-        {/* Human-Readable Gate Passcode */}
+        {/* Gate Passcode PIN */}
         <div className="human-code-card">
           <div className="human-code-top">
             <span className="human-code-tag">
-              <span className="human-code-dot" /> HUMAN CHECK-IN PASSCODE
+              <span className="human-code-dot" /> Gate Passcode
             </span>
-            <span className="human-code-sub">Manual Entry / Guard Verification</span>
+            <span className="human-code-sub">Show at gate or enter manually</span>
           </div>
           <div className="human-code-display">
             <div className="human-code-pill">
-              <span className="human-code-prefix">GATE PIN</span>
+              <span className="human-code-prefix">PASS PIN</span>
               <span className="human-code-digits">
                 {booking._id ? `NPK-${booking._id.slice(-6).toUpperCase()}` : "NPK-PASS"}
               </span>
@@ -257,7 +364,7 @@ function QRCodePage() {
             {downloaded ? (
               <><Icon d={ICONS.check} size={16} />Downloaded!</>
             ) : (
-              <><Icon d={ICONS.download} size={16} />Download QR</>
+              <><Icon d={ICONS.download} size={16} />Download Ticket</>
             )}
           </button>
           <button className="btn-print" onClick={handlePrint} id="btn-print-ticket">
@@ -268,13 +375,13 @@ function QRCodePage() {
         {/* Back link */}
         <button className="btn-back-dash" onClick={() => navigate("/user/dashboard")} id="btn-back-dashboard">
           <Icon d={ICONS.back} size={14} />
-          Back to Dashboard
+          Back to My Bookings
         </button>
 
       </div>
 
       <p className="qr-footer-note">
-        🔒 Cryptographically secured ticket · NextPark AI © 2025
+        NextPark Smart Parking · Valid for reserved vehicle entry
       </p>
     </div>
   );

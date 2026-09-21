@@ -23,37 +23,26 @@ export const formatTicketDate = (date) => {
 };
 
 /**
- * Build the standardized JSON payload string encoded in the QR code
+ * Build the standardized QR payload string
+ * Encodes direct verification URL so any normal smartphone camera or scanner can read and open it directly!
  * @param {object} booking - Booking object from API
- * @returns {string} JSON string
+ * @returns {string} Verification URL string
  */
 export const buildQRPayload = (booking) => {
-  if (!booking) return "";
+  if (!booking || booking.paymentStatus !== "Paid" || booking.status === "Cancelled") {
+    return "";
+  }
 
-  const payload = {
-    app: "NextPark AI",
-    version: "1.0",
-    bookingId: booking._id,
-    user: booking.user?.name || "Customer",
-    parking: booking.parking?.name || "Parking Spot",
-    city: booking.parking?.city || "N/A",
-    slot: booking.slot?.slotNumber || "N/A",
-    vehicleType: booking.slot?.vehicleType || "Car",
-    date: formatTicketDate(booking.bookingDate),
-    time: `${booking.startTime || "N/A"} - ${booking.endTime || "N/A"}`,
-    duration: `${booking.duration || 1} hr(s)`,
-    amount: `INR ${booking.totalAmount || 0}`,
-    paymentStatus: booking.paymentStatus || "Pending",
-    bookingStatus: booking.status || "Booked",
-    verifyUrl: `${
-      process.env.REACT_APP_BACKEND_URL ||
-      (process.env.REACT_APP_API_URL
-        ? process.env.REACT_APP_API_URL.replace(/\/api\/?$/, "")
-        : "http://localhost:5000")
-    }/api/bookings/verify-qr?id=${booking._id}`,
-  };
+  const origin =
+    typeof window !== "undefined" && window.location?.origin
+      ? window.location.origin
+      : "http://localhost:3000";
 
-  return JSON.stringify(payload);
+  const pin = booking._id
+    ? `NPK-${booking._id.slice(-6).toUpperCase()}`
+    : "";
+
+  return `${origin}/verify-ticket?id=${booking._id}&pin=${pin}`;
 };
 
 /**
@@ -246,6 +235,16 @@ export const verifyBookingQR = async (qrData) => {
   return response.data;
 };
 
+/**
+ * Publicly verify ticket by ID or Passcode PIN (works without requiring login)
+ * @param {string} idOrPin
+ * @returns {Promise<object>} Verification result
+ */
+export const verifyBookingPublic = async (idOrPin) => {
+  const response = await api.get(`/bookings/verify-public/${idOrPin}`);
+  return response.data;
+};
+
 const qrService = {
   formatTicketDate,
   buildQRPayload,
@@ -253,6 +252,7 @@ const qrService = {
   printQRTicket,
   getBookingQRFromBackend,
   verifyBookingQR,
+  verifyBookingPublic,
 };
 
 export default qrService;
