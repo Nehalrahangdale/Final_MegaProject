@@ -37,3 +37,18 @@ yarn-error.log*
 # Cloudinary / Temp Uploads
 uploads/
 */uploads/
+
+# Sensitive Scripts & Credentials (local only)
+backend/scripts/createPceOwner.js
+backend/scripts/createAdmin.js
+backend/scripts/checkAdmin.js
+backend/scripts/resetAdminPassword.js
+backend/scripts/test_all_features.js
+backend/scripts/check_nehal.js
+backend/scripts/check_user_bookings.js
+backend/scripts/reset_user_test_bookings.js
+backend/scripts/test_qr_guard.js
+*.pem
+*.key
+*.cert
+
