@@ -1,5 +1,5 @@
-flask
-flask-cors
-scikit-learn
-pandas
+# Python ML runtime dependencies for NextPark AI
 numpy
+pandas
+scikit-learn
+joblib
