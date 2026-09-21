@@ -1,0 +1,13 @@
+{
+  "name": "next-park-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NextPark AI - Smart Parking Management Platform",
+  "scripts": {
+    "start": "node backend/server.js",
+    "backend": "npm --prefix backend start",
+    "backend:install": "npm --prefix backend install",
+    "ai:install": "python -m pip install -r ai/requirements.txt",
+    "build": "npm --prefix backend install && npm --prefix frontend install && npm --prefix frontend run build"
+  }
+}
