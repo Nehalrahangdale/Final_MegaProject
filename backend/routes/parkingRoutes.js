@@ -54,11 +54,12 @@ router.get(
   getMyParking
 );
 
+// Get AI Occupancy & Demand Prediction
+// IMPORTANT: this route must come before /:id
+router.get("/:id/prediction", getParkingPrediction);
+
 // Get parking by ID
 router.get("/:id", getParkingById);
-
-// Get AI Occupancy & Demand Prediction
-router.get("/:id/prediction", getParkingPrediction);
 
 // Add parking
 router.post(
