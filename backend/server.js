@@ -5,6 +5,7 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
+const fs = require("fs");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const http = require("http");
@@ -164,6 +165,28 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/owner", ownerRoutes);
+
+// =======================
+// Serve React frontend (single-link deployment)
+// =======================
+
+const buildPath = path.join(__dirname, "../frontend/build");
+
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath));
+
+  app.use((req, res, next) => {
+    if (
+      req.method !== "GET" ||
+      req.path.startsWith("/api") ||
+      req.path.startsWith("/uploads") ||
+      req.path.startsWith("/socket.io")
+    ) {
+      return next();
+    }
+    res.sendFile(path.join(buildPath, "index.html"));
+  });
+}
 
 // =======================
 // Home Route
