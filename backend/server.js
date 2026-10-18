@@ -1,3 +1,7 @@
+// Use Google DNS so MongoDB Atlas SRV lookup works on networks that block it
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
 const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
@@ -16,7 +20,6 @@ connectDB();
 
 const app = express();
 
-// =======================
 // =======================
 // CORS & Origins Configuration
 // =======================
